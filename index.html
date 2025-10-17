@@ -726,8 +726,7 @@
             
             emptyState.classList.add('hidden');
             
-            grid.innerHTML = filteredSuppliers.map(supplier => {
-                // Generate Schema.org structured data for each supplier
+            const cards = filteredSuppliers.map(supplier => {
                 const schemaData = {
                     "@context": "https://schema.org",
                     "@type": "LocalBusiness",
@@ -738,7 +737,6 @@
                         "addressLocality": supplier.location,
                         "addressCountry": "NO"
                     },
-                    "url": `https://follohjelp.no#${supplier.slug}`,
                     "areaServed": {
                         "@type": "Place",
                         "name": "Follo"
@@ -749,45 +747,70 @@
                     schemaData.image = supplier.image;
                 }
                 
-                if (supplier.contact) {
-                    schemaData.contactPoint = {
-                        "@type": "ContactPoint",
-                        "contactType": "customer service"
-                    };
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'supplier-card';
+                cardDiv.setAttribute('itemscope', '');
+                cardDiv.setAttribute('itemtype', 'https://schema.org/LocalBusiness');
+                
+                const schemaScript = document.createElement('script');
+                schemaScript.type = 'application/ld+json';
+                schemaScript.textContent = JSON.stringify(schemaData);
+                cardDiv.appendChild(schemaScript);
+                
+                if (supplier.image) {
+                    const img = document.createElement('img');
+                    img.src = supplier.image;
+                    img.alt = supplier.name;
+                    img.className = 'supplier-image';
+                    img.setAttribute('itemprop', 'image');
+                    cardDiv.appendChild(img);
                 }
                 
-                return `
-                <div class="supplier-card" itemscope itemtype="https://schema.org/LocalBusiness">
-                    <script type="application/ld+json">${JSON.stringify(schemaData)}</script>
-                    
-                    ${supplier.image ? `
-                        <img 
-                            src="${supplier.image}" 
-                            alt="${supplier.name}"
-                            class="supplier-image"
-                            itemprop="image"
-                        />
-                    ` : ''}
-                    
-                    <div class="supplier-content">
-                        <span class="supplier-category">${supplier.category}</span>
-                        <h3 class="supplier-name" itemprop="name">${supplier.name}</h3>
-                        <p class="supplier-description" itemprop="description">${supplier.description}</p>
-                        
-                        <div class="supplier-meta">
-                            <div class="supplier-location" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
-                                📍 <span itemprop="addressLocality">${supplier.location}</span>
-                            </div>
-                            ${supplier.contact ? `
-                                <div class="supplier-contact">
-                                    ${supplier.contact}
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                </div>
-            `;
-            }).join('');
+                const content = document.createElement('div');
+                content.className = 'supplier-content';
+                
+                const category = document.createElement('span');
+                category.className = 'supplier-category';
+                category.textContent = supplier.category;
+                content.appendChild(category);
+                
+                const name = document.createElement('h3');
+                name.className = 'supplier-name';
+                name.setAttribute('itemprop', 'name');
+                name.textContent = supplier.name;
+                content.appendChild(name);
+                
+                const description = document.createElement('p');
+                description.className = 'supplier-description';
+                description.setAttribute('itemprop', 'description');
+                description.textContent = supplier.description;
+                content.appendChild(description);
+                
+                const meta = document.createElement('div');
+                meta.className = 'supplier-meta';
+                
+                const location = document.createElement('div');
+                location.className = 'supplier-location';
+                location.setAttribute('itemprop', 'address');
+                location.setAttribute('itemscope', '');
+                location.setAttribute('itemtype', 'https://schema.org/PostalAddress');
+                location.innerHTML = '📍 <span itemprop="addressLocality">' + supplier.location + '</span>';
+                meta.appendChild(location);
+                
+                if (supplier.contact) {
+                    const contact = document.createElement('div');
+                    contact.className = 'supplier-contact';
+                    contact.textContent = supplier.contact;
+                    meta.appendChild(contact);
+                }
+                
+                content.appendChild(meta);
+                cardDiv.appendChild(content);
+                
+                return cardDiv.outerHTML;
+            });
+            
+            grid.innerHTML = cards.join('');
         }
 
         // Event listeners
