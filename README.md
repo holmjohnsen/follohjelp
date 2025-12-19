@@ -8,9 +8,9 @@ This is a local directory site for finding handymen and professional services in
 ## Tech Stack
 - Static HTML/CSS/JS
 - Airtable as database
--   const AIRTABLE_TOKEN = process.env.AIRTABLE_TOKEN;
-    const BASE_ID = 'appxU50VzUzCm4dSR';
-    const TABLE_NAME = 'Suppliers';
+    - const AIRTABLE_TOKEN = process.env.AIRTABLE_TOKEN;
+    - const BASE_ID = 'appxU50VzUzCm4dSR';
+    - const TABLE_NAME = 'Suppliers';
 - Netlify Functions for secure API calls
 - Deployed on Netlify
 
