@@ -67,7 +67,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
     if (err instanceof z.ZodError) {
-      const message = err.errors.map((e) => e.message).join(", ");
+      const message = err.issues.map((e) => e.message).join(", ");
       return NextResponse.json({ error: message }, { status: 400 });
     }
 

@@ -3,21 +3,22 @@ import { sendEmail } from "@/lib/email";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-const leadSchema = z.object({
-  category: z.string().min(1, "Kategori er påkrevd"),
+
+ const leadSchema = z.object({
+  category: z.string().min(1, "Velg kategori"),
   description: z.string().min(1, "Beskrivelse er påkrevd"),
-  location: z.string().min(1, "Sted er påkrevd"),
+  location: z.string().min(1, "Velg sted"),
   name: z.string().min(1, "Navn er påkrevd"),
   email: z.string().email("Ugyldig e-post"),
   phone: z.string().optional(),
-  consent: z.literal(true, {
-    errorMap: () => ({ message: "Du må samtykke til vilkårene" }),
+  consent: z.boolean().refine((v) => v === true, {
+    message: "Du må samtykke til vilkårene",
   }),
-});
+}); // <-- IMPORTANT: this closing }); and semicolon
 
-type LeadPayload = z.infer<typeof leadSchema>;
 
-async function matchProviders(payload: LeadPayload) {
+async function matchProviders(payload: z.infer<typeof leadSchema>) {
+
   const primary = await getProvidersWithEmail({
     category: payload.category,
     location: payload.location,
@@ -49,7 +50,7 @@ export async function GET() {
   }
 }
 
-function buildEmailText(payload: LeadPayload) {
+function buildEmailText(payload: z.infer<typeof leadSchema>) {
   return [
     `Ny henvendelse via Follohjelp:`,
     ``,
@@ -122,7 +123,7 @@ await Promise.all(
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      const message = error.errors.map((e) => e.message).join(", ");
+        const message = error.issues.map((e) => e.message).join(", ");
       return NextResponse.json({ error: message }, { status: 400 });
     }
 
