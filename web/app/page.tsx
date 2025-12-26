@@ -8,8 +8,10 @@ export default function Home() {
       <header>
         <div className="container">
           <nav className="nav">
-            <div className="logo">🏡 Follohjelp</div>
-            <a className="badge" href="/list-din-bedrift">
+            <a className="logo" href="https://follohjelp.no">
+              🏡 Follohjelp
+            </a>
+            <a className="badge" href="https://follohjelp.no/list-din-bedrift">
               List din bedrift
             </a>
           </nav>
@@ -71,7 +73,10 @@ export default function Home() {
               </p>
             </div>
             <div className="lead-actions">
-              <a className="search-btn" href="/for-bedrifter">
+              <a
+                className="search-btn"
+                href="https://follohjelp.no/list-din-bedrift"
+              >
                 Legg til bedrift
               </a>
             </div>
