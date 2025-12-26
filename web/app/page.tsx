@@ -1,22 +1,13 @@
 import CookieBanner from "@/components/CookieBanner";
+import SiteFooter from "@/components/SiteFooter";
+import SiteHeader from "@/components/SiteHeader";
 
 export default function Home() {
   return (
     <>
       <CookieBanner />
 
-      <header>
-        <div className="container">
-          <nav className="nav">
-            <a className="logo" href="https://follohjelp.no">
-              🏡 Follohjelp
-            </a>
-            <a className="badge" href="/for-bedrifter">
-              List din bedrift
-            </a>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="container">
         <section className="hero">
@@ -84,19 +75,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer>
-        <div className="container">
-          <div className="footer-content">
-            <div className="footer-text">
-              © 2025 Follohjelp.no – Lokale tjenester i Follo
-            </div>
-            <div className="footer-locations">
-              Drøbak • Ås • Ski • Vestby • Nesodden • Nordre Follo |{" "}
-              <a href="/personvern">Personvern</a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </>
   );
 }
