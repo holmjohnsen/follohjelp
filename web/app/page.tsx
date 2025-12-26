@@ -1,13 +1,9 @@
 import CookieBanner from "@/components/CookieBanner";
-import SiteFooter from "@/components/SiteFooter";
-import SiteHeader from "@/components/SiteHeader";
 
 export default function Home() {
   return (
     <>
       <CookieBanner />
-
-      <SiteHeader />
 
       <main className="container">
         <section className="hero">
@@ -74,8 +70,6 @@ export default function Home() {
           </div>
         </section>
       </main>
-
-      <SiteFooter />
     </>
   );
 }
