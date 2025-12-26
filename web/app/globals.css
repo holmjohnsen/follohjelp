@@ -495,6 +495,19 @@ footer {
   padding: 10px 12px;
   font-size: 15px;
   outline: none;
+  font-family: inherit;
+  line-height: 1.4;
+}
+
+.lead-field input,
+.lead-field select {
+  min-height: 44px;
+}
+
+.lead-field input::placeholder,
+.lead-field textarea::placeholder {
+  font-family: inherit;
+  color: var(--muted);
 }
 
 .lead-field textarea {
