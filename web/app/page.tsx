@@ -11,7 +11,7 @@ export default function Home() {
             <a className="logo" href="https://follohjelp.no">
               🏡 Follohjelp
             </a>
-            <a className="badge" href="https://follohjelp.no/list-din-bedrift">
+            <a className="badge" href="/for-bedrifter">
               List din bedrift
             </a>
           </nav>
@@ -75,7 +75,7 @@ export default function Home() {
             <div className="lead-actions">
               <a
                 className="search-btn"
-                href="https://follohjelp.no/list-din-bedrift"
+                href="/for-bedrifter"
               >
                 Legg til bedrift
               </a>
