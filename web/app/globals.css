@@ -542,3 +542,239 @@ footer {
   color: #c0392b;
   font-size: 13px;
 }
+
+/* app/globals.css */
+/* Hvis du allerede har globale styles, kan du lime inn dette nederst. */
+
+:root{
+  --fh-bg: #0b0f14;
+  --fh-card: rgba(16,24,38,.82);
+  --fh-muted: rgba(255,255,255,.72);
+  --fh-text: rgba(255,255,255,.92);
+  --fh-border: rgba(255,255,255,.10);
+  --fh-shadow: 0 12px 40px rgba(0,0,0,.35);
+  --fh-radius: 16px;
+}
+
+html, body { height: 100%; }
+body{
+  margin: 0;
+  background:
+    radial-gradient(900px 500px at 15% 10%, rgba(125,211,252,.18), transparent 60%),
+    radial-gradient(900px 500px at 85% 30%, rgba(167,139,250,.16), transparent 60%),
+    var(--fh-bg);
+  color: var(--fh-text);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    "Apple Color Emoji","Segoe UI Emoji";
+  line-height: 1.45;
+}
+
+a{ color: inherit; text-decoration: none; }
+
+.fh-container{
+  width: min(1080px, calc(100% - 32px));
+  margin: 0 auto;
+  padding-bottom: 28px;
+}
+
+.fh-nav{
+  display:flex;
+  justify-content: space-between;
+  align-items:center;
+  padding: 18px 0;
+}
+
+.fh-brand{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+.fh-brandBadge{
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(125,211,252,.85), rgba(167,139,250,.85));
+  box-shadow: 0 10px 25px rgba(0,0,0,.25);
+}
+
+.fh-navLinks{
+  display:flex;
+  gap: 14px;
+  align-items:center;
+  font-size: 14px;
+  color: var(--fh-muted);
+}
+
+.fh-navLinks a{
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+.fh-navLinks a:hover{
+  background: rgba(255,255,255,.06);
+  color: var(--fh-text);
+}
+
+.fh-hero{ padding: 30px 0 18px; }
+
+.fh-heroGrid{
+  display:grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 18px;
+  align-items: start;
+}
+@media (max-width: 900px){
+  .fh-heroGrid{ grid-template-columns: 1fr; }
+  .fh-nav{ gap: 12px; flex-wrap: wrap; }
+}
+
+.fh-card{
+  background: var(--fh-card);
+  border: 1px solid var(--fh-border);
+  border-radius: var(--fh-radius);
+  box-shadow: var(--fh-shadow);
+  padding: 18px;
+  backdrop-filter: blur(8px);
+}
+
+.fh-h1{
+  margin: 0 0 10px;
+  font-size: clamp(28px, 3vw, 42px);
+  line-height: 1.12;
+  letter-spacing: -0.6px;
+}
+
+.fh-h2{
+  margin: 0 0 10px;
+  font-size: 16px;
+  letter-spacing: -0.2px;
+}
+
+.fh-h3{
+  margin: 0 0 10px;
+  font-size: 16px;
+  color: rgba(255,255,255,.88);
+  letter-spacing: -0.2px;
+}
+
+.fh-lead{
+  margin: 0 0 14px;
+  color: var(--fh-muted);
+  font-size: 16px;
+}
+
+.fh-search{
+  display:flex;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.fh-input{
+  flex: 1 1 320px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--fh-border);
+  background: rgba(0,0,0,.18);
+}
+
+.fh-input input{
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--fh-text);
+  font-size: 15px;
+}
+
+.fh-btn{
+  border: 1px solid var(--fh-border);
+  background: rgba(255,255,255,.06);
+  color: var(--fh-text);
+  padding: 12px 14px;
+  border-radius: 12px;
+  cursor:pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap: 8px;
+}
+.fh-btn:hover{ background: rgba(255,255,255,.10); }
+
+.fh-btnPrimary{
+  border: none;
+  background: linear-gradient(135deg, rgba(125,211,252,.95), rgba(167,139,250,.95));
+  color: rgba(0,0,0,.85);
+}
+.fh-btnPrimary:hover{ filter: brightness(1.03); }
+
+.fh-note{
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--fh-muted);
+}
+
+.fh-pillRow{
+  display:flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.fh-pill{
+  border: 1px solid var(--fh-border);
+  background: rgba(255,255,255,.05);
+  padding: 9px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--fh-muted);
+}
+.fh-pill strong{ color: var(--fh-text); font-weight: 700; }
+
+.fh-section{ padding: 14px 0; }
+
+.fh-grid{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+@media (max-width: 900px){
+  .fh-grid{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 520px){
+  .fh-grid{ grid-template-columns: 1fr; }
+}
+
+.fh-tile{
+  padding: 14px;
+  border-radius: var(--fh-radius);
+  border: 1px solid var(--fh-border);
+  background: rgba(255,255,255,.04);
+  transition: transform .12s ease, background .12s ease;
+}
+.fh-tile:hover{
+  transform: translateY(-2px);
+  background: rgba(255,255,255,.06);
+}
+.fh-tileTitle{ font-weight: 700; margin-bottom: 4px; }
+.fh-tileMeta{ font-size: 13px; color: var(--fh-muted); }
+
+.fh-cta{
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.fh-footer{
+  padding: 26px 0 10px;
+  color: rgba(255,255,255,.55);
+  font-size: 13px;
+}
