@@ -547,12 +547,12 @@ footer {
 /* Hvis du allerede har globale styles, kan du lime inn dette nederst. */
 
 :root{
-  --fh-bg: #0b0f14;
-  --fh-card: rgba(16,24,38,.82);
-  --fh-muted: rgba(255,255,255,.72);
-  --fh-text: rgba(255,255,255,.92);
-  --fh-border: rgba(255,255,255,.10);
-  --fh-shadow: 0 12px 40px rgba(0,0,0,.35);
+  --fh-bg: #f7f9fc;
+  --fh-card: #ffffff;
+  --fh-muted: #475569;
+  --fh-text: #0f172a;
+  --fh-border: #d7dfe8;
+  --fh-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
   --fh-radius: 16px;
 }
 
@@ -560,8 +560,8 @@ html, body { height: 100%; }
 body{
   margin: 0;
   background:
-    radial-gradient(900px 500px at 15% 10%, rgba(125,211,252,.18), transparent 60%),
-    radial-gradient(900px 500px at 85% 30%, rgba(167,139,250,.16), transparent 60%),
+    radial-gradient(780px 420px at 12% 18%, rgba(125,211,252,.18), transparent 55%),
+    radial-gradient(820px 460px at 88% 8%, rgba(143,188,143,.16), transparent 55%),
     var(--fh-bg);
   color: var(--fh-text);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
@@ -630,13 +630,20 @@ a{ color: inherit; text-decoration: none; }
   .fh-nav{ gap: 12px; flex-wrap: wrap; }
 }
 
+.fh-card h1,
+.fh-card h2,
+.fh-card h3,
+.fh-card p {
+  color: var(--fh-text);
+}
+
 .fh-card{
   background: var(--fh-card);
   border: 1px solid var(--fh-border);
   border-radius: var(--fh-radius);
   box-shadow: var(--fh-shadow);
   padding: 18px;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(6px);
 }
 
 .fh-h1{
@@ -694,8 +701,8 @@ a{ color: inherit; text-decoration: none; }
 
 .fh-btn{
   border: 1px solid var(--fh-border);
-  background: rgba(255,255,255,.06);
-  color: var(--fh-text);
+  background: #e8f1ed;
+  color: #0f172a;
   padding: 12px 14px;
   border-radius: 12px;
   cursor:pointer;
@@ -706,14 +713,14 @@ a{ color: inherit; text-decoration: none; }
   justify-content:center;
   gap: 8px;
 }
-.fh-btn:hover{ background: rgba(255,255,255,.10); }
+.fh-btn:hover{ background: #dbe8e2; }
 
 .fh-btnPrimary{
   border: none;
-  background: linear-gradient(135deg, rgba(125,211,252,.95), rgba(167,139,250,.95));
-  color: rgba(0,0,0,.85);
+  background: linear-gradient(135deg, #0a7c66, #0f9b82);
+  color: #ffffff;
 }
-.fh-btnPrimary:hover{ filter: brightness(1.03); }
+.fh-btnPrimary:hover{ filter: brightness(1.04); }
 
 .fh-note{
   margin-top: 10px;
@@ -729,13 +736,13 @@ a{ color: inherit; text-decoration: none; }
 
 .fh-pill{
   border: 1px solid var(--fh-border);
-  background: rgba(255,255,255,.05);
+  background: #f0f4f8;
   padding: 9px 10px;
   border-radius: 999px;
   font-size: 13px;
-  color: var(--fh-muted);
+  color: #0f172a;
 }
-.fh-pill strong{ color: var(--fh-text); font-weight: 700; }
+.fh-pill strong{ color: #0f172a; font-weight: 700; }
 
 .fh-section{ padding: 14px 0; }
 
@@ -755,12 +762,12 @@ a{ color: inherit; text-decoration: none; }
   padding: 14px;
   border-radius: var(--fh-radius);
   border: 1px solid var(--fh-border);
-  background: rgba(255,255,255,.04);
+  background: #f6f8fb;
   transition: transform .12s ease, background .12s ease;
 }
 .fh-tile:hover{
   transform: translateY(-2px);
-  background: rgba(255,255,255,.06);
+  background: #e9eef5;
 }
 .fh-tileTitle{ font-weight: 700; margin-bottom: 4px; }
 .fh-tileMeta{ font-size: 13px; color: var(--fh-muted); }
@@ -777,4 +784,38 @@ a{ color: inherit; text-decoration: none; }
   padding: 26px 0 10px;
   color: rgba(255,255,255,.55);
   font-size: 13px;
+}
+
+/* Light theme overrides for legacy components */
+body {
+  background: #f7f9fc;
+  color: #1a1b1e;
+}
+
+.search-bar {
+  background: #ffffff;
+  border: 1px solid #d7dfe8;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+}
+
+.search-btn {
+  background: #0a7c66;
+  color: #ffffff;
+}
+
+.search-btn:hover {
+  background: #0f9b82;
+}
+
+.category-pill {
+  background: #eef2f6;
+  border: 1px solid #d7dfe8;
+  color: #0f172a;
+}
+
+.category-pill:hover,
+.category-pill.active {
+  background: #dbe8e2;
+  border-color: #0a7c66;
+  color: #0a7c66;
 }
