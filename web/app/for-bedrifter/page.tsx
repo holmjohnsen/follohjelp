@@ -45,7 +45,7 @@ const faqItems = [
   {
     question: "Hvem står bak Follohjelp?",
     answer:
-      "Follohjelp er laget lokalt, med mål om å gjøre det enklere for folk i Follo å finne seriøse håndverkere i nærområdet. Les mer på follohjelp.no/om-follohjelp.",
+      "Follohjelp er laget lokalt, med mål om å gjøre det enklere for folk i Follo å finne seriøse håndverkere i nærområdet.",
   },
 ];
 
@@ -121,11 +121,8 @@ export default function ForBedrifterPage() {
                 <div className="fh-tileMeta">
                   {item.question === "Hvem står bak Follohjelp?" ? (
                     <>
-                      Follohjelp er laget lokalt, med mål om å gjøre det enklere
-                      for folk i Follo å finne seriøse håndverkere i nærområdet.
-                      {" "}
-                      Les mer på{" "}
-                      <a href="/om-follohjelp">follohjelp.no/om-follohjelp</a>.
+                      {item.answer} Les mer på{" "}
+                      <a href="/om-follohjelp">Om Follohjelp</a>.
                     </>
                   ) : (
                     item.answer
