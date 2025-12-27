@@ -6,7 +6,7 @@ export default function SiteHeader() {
           <a className="logo" href="https://follohjelp.no">
             🏡 Follohjelp
           </a>
-          <a className="badge" href="/for-bedrifter">
+          <a className="fh-btn fh-btnPrimary" href="/for-bedrifter">
             For bedrifter
           </a>
         </nav>

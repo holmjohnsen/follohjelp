@@ -14,6 +14,9 @@ export default function Home() {
             lokal tilknytning – slik at du slipper å lete overalt når noe skal
             fikses, bygges eller pusses opp.
           </p>
+          <p className="results-count">
+            Dekker Drøbak, Ås, Ski, Vestby, Nesodden og omegn.
+          </p>
 
           <div className="search-bar">
             <input
@@ -49,6 +52,11 @@ export default function Home() {
             </a>
           </div>
         </section>
+
+        <p className="results-count">
+          Er du håndverker i Follo? Les mer på{" "}
+          <a href="/for-bedrifter">For bedrifter</a>.
+        </p>
 
         <section className="lead-section">
           <div className="lead-card">

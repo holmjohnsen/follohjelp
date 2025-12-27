@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Om Follohjelp – en lokal oversikt over håndverkere i Follo",
+  description:
+    "Bakgrunnen for Follohjelp og hvorfor siden ble laget: en enkel, lokal oversikt over håndverkere i Follo.",
+};
+
 const introText =
   "Follohjelp er laget for å gjøre det enklere å finne lokale håndverkere i Follo – uten støy, falske anmeldelser eller “markedsplass-følelse”.";
 

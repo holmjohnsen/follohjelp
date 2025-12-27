@@ -1,5 +1,12 @@
 import ProviderSignupForm from "@/components/ProviderSignupForm";
 import Script from "next/script";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "For håndverkere i Follo – bli synlig lokalt | Follohjelp",
+  description:
+    "En lokal oversikt for håndverkere i Follo. Ingen budrunder eller betaling per henvendelse. Registrer bedriften i oppstartsfasen.",
+};
 
 const heroIntro =
   "Follohjelp er en lokal oversikt over håndverkere i Follo. Vi samler fagfolk med lokal tilknytning slik at folk i området finner deg når noe skal fikses, bygges eller pusses opp.";
@@ -141,6 +148,10 @@ export default function ForBedrifterPage() {
           publiseres.
         </p>
         <ProviderSignupForm />
+        <p className="fh-note">
+          Vi deler ikke informasjonen din videre og tar kontakt før noe
+          publiseres.
+        </p>
       </section>
 
       <Script
