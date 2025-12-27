@@ -18,7 +18,7 @@ export default function Home() {
             Dekker Drøbak, Ås, Ski, Vestby, Nesodden og omegn.
           </p>
 
-          <div className="search-bar">
+          <div className="search-bar" style={{ marginTop: "16px" }}>
             <input
               type="text"
               placeholder="Søk etter håndverker eller fagfelt"
@@ -52,11 +52,6 @@ export default function Home() {
             </a>
           </div>
         </section>
-
-        <p className="results-count">
-          Er du håndverker i Follo? Les mer på{" "}
-          <a href="/for-bedrifter">For bedrifter</a>.
-        </p>
 
         <section className="lead-section">
           <div className="lead-card">
