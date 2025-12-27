@@ -7,7 +7,7 @@ export default function SiteFooter() {
             © 2025 Follohjelp.no – Lokale tjenester i Follo
           </div>
           <div className="footer-locations">
-            Drøbak • Ås • Ski • Vestby • Nesodden • Nordre Follo |{" "}
+            Drøbak • Ås • Ski • Vestby • Nesodden |{" "}
             <a href="/personvern">Personvern</a>
           </div>
           <div className="footer-locations">
