@@ -650,6 +650,21 @@ a{ color: inherit; text-decoration: none; }
   color: var(--fh-text);
 }
 
+.fh-card a,
+.fh-lead a,
+.results-count a,
+.subtitle a {
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+}
+
+.fh-card a:hover,
+.fh-lead a:hover,
+.results-count a:hover,
+.subtitle a:hover {
+  text-decoration-thickness: 2px;
+}
+
 .fh-card{
   background: var(--fh-card);
   border: 1px solid var(--fh-border);
