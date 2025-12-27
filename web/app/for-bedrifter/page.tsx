@@ -10,9 +10,9 @@ const whatList = [
 ];
 
 const howSteps = [
-  "Du sender inn bedriften din (nedenfor).",
-  "Vi gjør en enkel kontroll og setter status til pending i Airtable.",
-  "Når vi har alt vi trenger, publiseres bedriften og du får beskjed.",
+  "Du sender inn informasjon om bedriften din i skjemaet nedenfor.",
+  "Vi går raskt gjennom opplysningene for å sikre at alt stemmer.",
+  "Når alt er klart, blir bedriften publisert på Follohjelp – og du får beskjed.",
 ];
 
 const fitList = [
