@@ -8,7 +8,8 @@ export default function SiteFooter() {
           </div>
           <div className="footer-locations">
             Drøbak • Ås • Ski • Vestby • Nesodden |{" "}
-            <a href="/personvern">Personvern</a>
+            <a href="/personvern">Personvern</a> |{" "}
+            <a href="/om-follohjelp">Om Follohjelp</a>
           </div>
           <div className="footer-locations">
             <a href="mailto:hei@follohjelp.no">hei@follohjelp.no</a>
