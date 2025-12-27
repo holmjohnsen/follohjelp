@@ -17,7 +17,7 @@ export default function OmFollohjelpPage() {
 
       <section className="fh-section">
         <div className="fh-card">
-          <h2>Historien</h2>
+          <h2>Hvorfor jeg lagde Follohjelp</h2>
           <p className="fh-lead">
             Jeg flyttet tilbake til Drøbak etter å ha bodd andre steder i nesten
             25 år. Selv om jeg vokste opp her, var det overraskende mye som
@@ -37,6 +37,7 @@ export default function OmFollohjelpPage() {
             lete overalt.
           </p>
           <p className="fh-lead">Det ble starten på Follohjelp.</p>
+          <p className="fh-lead">– Hilsen Øyvind</p>
         </div>
       </section>
 
