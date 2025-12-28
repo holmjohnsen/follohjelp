@@ -34,10 +34,7 @@ function escapeFormulaValue(value: string) {
 
 function buildFilterFormula(filters: ProviderFilters) {
   const clauses = [`{status}="active"`];
-
-  if (filters.category && filters.category !== "Alle") {
-    clauses.push(`{category}="${escapeFormulaValue(filters.category)}"`);
-  }
+  // NB: category is a linked record; text filter here would return 0 rows. Category filtering is handled elsewhere.
 
   if (filters.location && filters.location !== "Alle") {
     clauses.push(`{location}="${escapeFormulaValue(filters.location)}"`);
