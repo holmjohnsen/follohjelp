@@ -20,6 +20,8 @@ const AIRTABLE_ASSIGNED_PROVIDERS_FIELD =
   process.env.AIRTABLE_ASSIGNED_PROVIDERS_FIELD ?? "assigned_providers";
 const AIRTABLE_CATEGORIES_TABLE = process.env.AIRTABLE_CATEGORIES_TABLE;
 const AIRTABLE_CATEGORIES_VIEW = process.env.AIRTABLE_CATEGORIES_VIEW;
+const AIRTABLE_LOCATIONS_TABLE = process.env.AIRTABLE_LOCATIONS_TABLE;
+const AIRTABLE_LOCATIONS_VIEW = process.env.AIRTABLE_LOCATIONS_VIEW;
 
 function ensureEnv(key: string | undefined, name: string) {
   if (!key) {
@@ -63,8 +65,8 @@ type LeadInput = {
 
 type ProviderInput = {
   name: string;
-  category: string;
-  location: string;
+  categoryId: string;
+  locationId: string;
   description: string;
   email: string;
   phone?: string;
@@ -85,6 +87,11 @@ export type Category = {
   id: string;
   name: string;
   slug: string;
+};
+
+export type Location = {
+  id: string;
+  name: string;
 };
 
 function slugifyCategory(name: string) {
@@ -263,6 +270,82 @@ export async function getCategories() {
 
   categories.sort((a, b) => a.name.localeCompare(b.name, "nb"));
   return categories;
+}
+
+export async function getLocations() {
+  const apiKey = ensureEnv(AIRTABLE_API_KEY, "AIRTABLE_API_KEY");
+  const baseId = ensureEnv(AIRTABLE_BASE_ID, "AIRTABLE_BASE_ID");
+  const table = ensureEnv(
+    AIRTABLE_LOCATIONS_TABLE ?? "Locations",
+    "AIRTABLE_LOCATIONS_TABLE",
+  );
+
+  const locations: Location[] = [];
+  let offset: string | undefined;
+
+  do {
+    const searchParams = new URLSearchParams({
+      pageSize: "100",
+    });
+
+    if (AIRTABLE_LOCATIONS_VIEW) {
+      searchParams.set("view", AIRTABLE_LOCATIONS_VIEW);
+    }
+
+    if (offset) {
+      searchParams.set("offset", offset);
+    }
+
+    const response = await fetch(
+      `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(
+        table,
+      )}?${searchParams.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          Accept: "application/json",
+        },
+      },
+    );
+
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(
+        `Failed to fetch locations: ${response.status} ${response.statusText} - ${text}`,
+      );
+    }
+
+    const data: {
+      records?: Array<{
+        id: string;
+        fields: Record<string, unknown>;
+      }>;
+      offset?: string;
+    } = await response.json();
+
+    (data.records ?? []).forEach((record) => {
+      const fields = record.fields ?? {};
+      const name = String(fields["name"] ?? "").trim();
+      if (!name) return;
+
+      const activeField = fields["active"];
+      const isActive =
+        activeField === undefined ||
+        activeField === null ||
+        Boolean(activeField);
+      if (!isActive) return;
+
+      locations.push({
+        id: record.id,
+        name,
+      });
+    });
+
+    offset = data.offset;
+  } while (offset);
+
+  locations.sort((a, b) => a.name.localeCompare(b.name, "nb"));
+  return locations;
 }
 
 export async function createLead(lead: LeadInput) {
@@ -509,8 +592,18 @@ export async function createPendingProvider(provider: ProviderInput) {
   const payload = {
     fields: {
       name: provider.name,
-      category: provider.category,
-      location: provider.location,
+      category:
+        provider.categoryId && provider.categoryId !== "OTHER"
+          ? [provider.categoryId]
+          : undefined,
+      category_other:
+        provider.categoryId === "OTHER" ? "ikke valgt" : undefined,
+      location:
+        provider.locationId && provider.locationId !== "OTHER"
+          ? [provider.locationId]
+          : undefined,
+      location_other:
+        provider.locationId === "OTHER" ? "ikke valgt" : undefined,
       description: provider.description,
       email: provider.email,
       phone: provider.phone ?? "",

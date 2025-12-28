@@ -1,33 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
-const categoryOptions = [
-  "Rørlegger",
-  "Snekker",
-  "Murer",
-  "Elektriker",
-  "Maler",
-  "Tømrer",
-  "Reparatør",
-  "Hagearbeid",
-  "Renhold",
-];
-
-const locationOptions = [
-  "Drøbak",
-  "Ås",
-  "Ski",
-  "Vestby",
-  "Nesodden",
-  "Nordre Follo",
-  "Annet",
-];
+type Option = { id: string; name: string };
 
 type FormState = {
   name: string;
-  category: string;
-  location: string;
+  categoryId: string;
+  locationId: string;
   description: string;
   email: string;
   phone: string;
@@ -36,8 +16,8 @@ type FormState = {
 
 const initialState: FormState = {
   name: "",
-  category: "",
-  location: "",
+  categoryId: "",
+  locationId: "",
   description: "",
   email: "",
   phone: "",
@@ -51,17 +31,33 @@ export default function ProviderSignupForm() {
     "idle",
   );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [categories, setCategories] = useState<Option[]>([]);
+  const [locations, setLocations] = useState<Option[]>([]);
 
   const isDisabled = status === "loading";
 
-  const categoryList = useMemo(() => categoryOptions, []);
-  const locationList = useMemo(() => locationOptions, []);
+  useEffect(() => {
+    async function loadOptions() {
+      try {
+        const res = await fetch("/api/meta");
+        const data = (await res.json()) as {
+          categories?: Option[];
+          locations?: Option[];
+        };
+        setCategories([...(data.categories ?? []), { id: "OTHER", name: "Annet" }]);
+        setLocations([...(data.locations ?? []), { id: "OTHER", name: "Annet" }]);
+      } catch (err) {
+        console.error("Failed to load meta", err);
+      }
+    }
+    void loadOptions();
+  }, []);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (!form.name) newErrors.name = "Navn er påkrevd";
-    if (!form.category) newErrors.category = "Velg kategori";
-    if (!form.location) newErrors.location = "Velg sted";
+    if (!form.categoryId) newErrors.categoryId = "Velg kategori";
+    if (!form.locationId) newErrors.locationId = "Velg sted";
     if (!form.description) newErrors.description = "Beskrivelse er påkrevd";
     if (!form.email) newErrors.email = "E-post er påkrevd";
     if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
@@ -140,20 +136,20 @@ export default function ProviderSignupForm() {
               <label htmlFor="category">Kategori *</label>
               <select
                 id="category"
-                value={form.category}
-                onChange={(e) => handleChange("category", e.target.value)}
+                value={form.categoryId}
+                onChange={(e) => handleChange("categoryId", e.target.value)}
                 disabled={isDisabled}
                 required
               >
                 <option value="">Velg kategori</option>
-                {categoryList.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
                   </option>
                 ))}
               </select>
-              {errors.category ? (
-                <span className="lead-error">{errors.category}</span>
+              {errors.categoryId ? (
+                <span className="lead-error">{errors.categoryId}</span>
               ) : null}
             </div>
           </div>
@@ -163,20 +159,20 @@ export default function ProviderSignupForm() {
               <label htmlFor="location">Sted *</label>
               <select
                 id="location"
-                value={form.location}
-                onChange={(e) => handleChange("location", e.target.value)}
+                value={form.locationId}
+                onChange={(e) => handleChange("locationId", e.target.value)}
                 disabled={isDisabled}
                 required
               >
                 <option value="">Velg sted</option>
-                {locationList.map((loc) => (
-                  <option key={loc} value={loc}>
-                    {loc}
+                {locations.map((loc) => (
+                  <option key={loc.id} value={loc.id}>
+                    {loc.name}
                   </option>
                 ))}
               </select>
-              {errors.location ? (
-                <span className="lead-error">{errors.location}</span>
+              {errors.locationId ? (
+                <span className="lead-error">{errors.locationId}</span>
               ) : null}
             </div>
             <div className="lead-field">

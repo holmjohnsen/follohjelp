@@ -9,8 +9,8 @@ import { sendEmail } from "@/lib/email";
 
 const providerSchema = z.object({
   name: z.string().min(1, "Navn er påkrevd"),
-  category: z.string().min(1, "Kategori er påkrevd"),
-  location: z.string().min(1, "Sted er påkrevd"),
+  categoryId: z.string().min(1, "Kategori er påkrevd"),
+  locationId: z.string().min(1, "Sted er påkrevd"),
   description: z.string().min(1, "Beskrivelse er påkrevd"),
   email: z.string().email("Ugyldig e-post"),
   phone: z.string().optional(),
@@ -43,11 +43,11 @@ export async function POST(req: Request) {
 
     const adminEmail = process.env.ADMIN_EMAIL;
     if (adminEmail) {
-      const subject = `Ny bedrift foreslått: ${parsed.name} (${parsed.category}, ${parsed.location})`;
+      const subject = `Ny bedrift foreslått: ${parsed.name}`;
       const lines = [
         `Navn: ${parsed.name}`,
-        `Kategori: ${parsed.category}`,
-        `Sted: ${parsed.location}`,
+        `Kategori ID: ${parsed.categoryId}`,
+        `Sted ID: ${parsed.locationId}`,
         `E-post: ${parsed.email}`,
         parsed.phone ? `Telefon: ${parsed.phone}` : null,
         "",
