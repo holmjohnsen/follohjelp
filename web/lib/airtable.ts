@@ -453,7 +453,8 @@ export async function getProvidersByCategorySlug(slug: string) {
     return { category: null, providers: [] as Provider[] };
   }
 
-  const filterFormula = `AND({status}="active", FIND(",${category.id},", "," & ARRAYJOIN({category}, ",") & ",")>0)`;
+  const categoryNameEscaped = escapeFormulaValue(category.name);
+  const filterFormula = `AND({status}="active", FIND(",${categoryNameEscaped},", "," & ARRAYJOIN({category}, ",") & ",")>0)`;
   const providersByLinked: AirtableProvider[] = await fetchProvidersByFormula(
     filterFormula,
     false,
@@ -463,6 +464,7 @@ export async function getProvidersByCategorySlug(slug: string) {
     JSON.stringify({
       slug,
       categoryId: category.id,
+      categoryName: category.name,
       formula: filterFormula,
       count: providersByLinked.length,
     }),
