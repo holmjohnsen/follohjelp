@@ -56,12 +56,15 @@ export default async function CategoryPage({
                   {(provider.category && provider.category.length > 0
                     ? provider.category.join(", ")
                     : "")}
-                </div>
-                <p className="supplier-description">
-                  {provider.description || "Ingen beskrivelse tilgjengelig."}
-                </p>
-                <div className="supplier-meta">
-                  <div className="supplier-location">{provider.location}</div>
+              </div>
+              <p className="supplier-description">
+                {provider.description || "Ingen beskrivelse tilgjengelig."}
+              </p>
+              <div className="supplier-meta">
+                  {provider.location &&
+                  !/^rec[A-Za-z0-9]{10,}$/.test(provider.location) ? (
+                    <div className="supplier-location">{provider.location}</div>
+                  ) : null}
                   {provider.phone ? (
                     <div className="supplier-contact">{provider.phone}</div>
                   ) : null}
