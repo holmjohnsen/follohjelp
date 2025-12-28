@@ -52,7 +52,11 @@ export default async function CategoryPage({
             <div className="supplier-card" key={provider.id}>
               <div className="supplier-content">
                 <div className="supplier-name">{provider.name}</div>
-                <div className="supplier-category">{provider.category}</div>
+                <div className="supplier-category">
+                  {(provider.category && provider.category.length > 0
+                    ? provider.category.join(", ")
+                    : "")}
+                </div>
                 <p className="supplier-description">
                   {provider.description || "Ingen beskrivelse tilgjengelig."}
                 </p>

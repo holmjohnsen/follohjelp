@@ -6,7 +6,7 @@ type ProviderFilters = {
 export type Provider = {
   id: string;
   name: string;
-  category: string;
+  category?: string[];
   location: string;
   description: string;
   phone?: string;
@@ -150,24 +150,25 @@ async function fetchProviders(filters: ProviderFilters, includeEmail = false) {
     (data.records ?? []).forEach((record) => {
       const fields = record.fields ?? {};
       const name = String(fields["name"] ?? "").trim();
-      const category = String(fields["category"] ?? "").trim();
-      const location = String(fields["location"] ?? "").trim();
-      const description = String(fields["description"] ?? "").trim();
-      const status = String(fields["status"] ?? "").trim();
+const categoryField = fields["category"];
+const categoryList = Array.isArray(categoryField)
+  ? categoryField.map((c) => String(c).trim()).filter(Boolean)
+  : [];
+const location = String(fields["location"] ?? "").trim();
+const description = String(fields["description"] ?? "").trim();
+const status = String(fields["status"] ?? "").trim();
 
-      if (status !== "active" || !name) {
-        return;
-      }
+if (status !== "active" || !name) return;
 
-      providers.push({
-        id: record.id,
-        name,
-        category,
-        location,
-        description,
-        phone: fields["phone"] ? String(fields["phone"]).trim() : undefined,
-        email: includeEmail && fields["email"] ? String(fields["email"]).trim() : undefined,
-      });
+providers.push({
+  id: record.id,
+  name,
+  category: categoryList,
+  location,
+  description,
+  phone: fields["phone"] ? String(fields["phone"]).trim() : undefined,
+  email: includeEmail && fields["email"] ? String(fields["email"]).trim() : undefined,
+});
     });
 
     offset = data.offset;
@@ -418,7 +419,10 @@ async function fetchProvidersByFormula(
     (data.records ?? []).forEach((record) => {
       const fields = record.fields ?? {};
       const name = String(fields["name"] ?? "").trim();
-      const category = String(fields["category"] ?? "").trim();
+      const categoryField = fields["category"];
+      const categoryList = Array.isArray(categoryField)
+        ? categoryField.map((c) => String(c).trim()).filter(Boolean)
+        : [];
       const location = String(fields["location"] ?? "").trim();
       const description = String(fields["description"] ?? "").trim();
       const status = String(fields["status"] ?? "").trim();
@@ -430,7 +434,7 @@ async function fetchProvidersByFormula(
       providers.push({
         id: record.id,
         name,
-        category,
+        category: categoryList,
         location,
         description,
         phone: fields["phone"] ? String(fields["phone"]).trim() : undefined,
@@ -451,38 +455,33 @@ export async function getProvidersByCategorySlug(slug: string) {
     return { category: null, providers: [] as Provider[] };
   }
 
-  const providersByName = await fetchProviders(
-    { category: category.name },
+  const providersByLinked: AirtableProvider[] = await fetchProvidersByFormula(
+    `AND({status}="active", SEARCH("${category.id}", ARRAYJOIN({category}))>0)`,
     false,
   );
 
-  let providersByLinked: AirtableProvider[] = [];
-  try {
-    providersByLinked = await fetchProvidersByFormula(
-      `AND({status}="active", SEARCH("${category.id}", ARRAYJOIN({categories}))>0)`,
-      false,
-    );
-  } catch {
-    providersByLinked = [];
-  }
+  const providers = providersByLinked
+    .map((provider) => {
+      if (!provider.category || provider.category.length === 0) {
+        return null;
+      }
+      const hasMatch = provider.category.some((catId) => catId === category.id);
+      if (!hasMatch) return null;
 
-  const combined = [...providersByName, ...providersByLinked].reduce<
-    Record<string, Provider>
-  >((acc, provider) => {
-    acc[provider.id] = {
-      id: provider.id,
-      name: provider.name,
-      category: provider.category,
-      location: provider.location,
-      description: provider.description,
-      phone: provider.phone,
-    };
-    return acc;
-  }, {});
+      return {
+        id: provider.id,
+        name: provider.name,
+        category: provider.category,
+        location: provider.location,
+        description: provider.description,
+        phone: provider.phone,
+      } satisfies Provider;
+    })
+    .filter(Boolean) as Provider[];
 
   return {
     category,
-    providers: Object.values(combined),
+    providers,
   };
 }
 
