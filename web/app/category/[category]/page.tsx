@@ -1,31 +1,27 @@
-import CookieBanner from "@/components/CookieBanner";
-import SuppliersBrowser from "@/components/SuppliersBrowser";
+export const dynamic = "force-dynamic";
 
-const categories = [
-  "Rørlegger",
-  "Snekker",
-  "Murer",
-  "Elektriker",
-  "Maler",
-  "Tømrer",
-  "Reparatør",
-  "Hagearbeid",
-  "Renhold",
-];
+import { getCategories, getProvidersByCategorySlug } from "@/lib/airtable";
+import { notFound } from "next/navigation";
 
-function normalizeValue(value: string) {
-  return value
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
-    .toLowerCase();
-}
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ category: string }>;
+}) {
+  const { category } = await params;
+  const categories = await getCategories();
+  const match = categories.find((cat) => cat.slug === category);
 
-function resolveCategory(slug: string) {
-  const decoded = decodeURIComponent(slug).replace(/-/g, " ");
-  const match = categories.find(
-    (cat) => normalizeValue(cat) === normalizeValue(decoded),
-  );
-  return match ?? decoded;
+  if (!match) {
+    return {
+      title: "Kategori ikke funnet | Follohjelp",
+    };
+  }
+
+  return {
+    title: `${match.name} i Follo | Follohjelp`,
+    description: `Finn lokale ${match.name.toLowerCase()} i Follo.`,
+  };
 }
 
 export default async function CategoryPage({
@@ -34,40 +30,53 @@ export default async function CategoryPage({
   params: Promise<{ category: string }>;
 }) {
   const { category } = await params;
-  const initialCategory = resolveCategory(category);
+  const { category: matchedCategory, providers } =
+    await getProvidersByCategorySlug(category);
+
+  if (!matchedCategory) {
+    return notFound();
+  }
 
   return (
-    <>
-      <CookieBanner />
+    <main className="container">
+      <section className="hero">
+        <h1>{matchedCategory.name} i Follo</h1>
+        <p className="results-count">
+          {providers.length} treff i kategorien {matchedCategory.name}.
+        </p>
+      </section>
 
-      <header>
-        <div className="container">
-          <nav className="nav">
-            <div className="logo">🏡 Follohjelp</div>
-            <a className="badge" href="/for-bedrifter">
-              List din bedrift
-            </a>
-          </nav>
-        </div>
-      </header>
-
-      <main className="container">
-        <SuppliersBrowser initialCategory={initialCategory} />
-      </main>
-
-      <footer>
-        <div className="container">
-          <div className="footer-content">
-            <div className="footer-text">
-              © 2025 Follohjelp.no – Lokale tjenester i Follo
+      <section className="fh-section">
+        <div className="suppliers-grid">
+          {providers.map((provider) => (
+            <div className="supplier-card" key={provider.id}>
+              <div className="supplier-content">
+                <div className="supplier-name">{provider.name}</div>
+                <div className="supplier-category">{provider.category}</div>
+                <p className="supplier-description">
+                  {provider.description || "Ingen beskrivelse tilgjengelig."}
+                </p>
+                <div className="supplier-meta">
+                  <div className="supplier-location">{provider.location}</div>
+                  {provider.phone ? (
+                    <div className="supplier-contact">{provider.phone}</div>
+                  ) : null}
+                </div>
+              </div>
             </div>
-            <div className="footer-locations">
-              Drøbak • Ås • Ski • Vestby • Nesodden • Nordre Follo |{" "}
-              <a href="/personvern">Personvern</a>
+          ))}
+          {providers.length === 0 ? (
+            <div className="supplier-card">
+              <div className="supplier-content">
+                <div className="supplier-name">Ingen treff ennå</div>
+                <p className="supplier-description">
+                  Vi legger til flere håndverkere fortløpende.
+                </p>
+              </div>
             </div>
-          </div>
+          ) : null}
         </div>
-      </footer>
-    </>
+      </section>
+    </main>
   );
 }
