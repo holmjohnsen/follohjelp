@@ -74,10 +74,10 @@ export async function POST(request: Request) {
     const parsed = leadSchema.parse(json);
 
     const matchedProviders = await matchProviders(parsed);
-    console.log(
-  "[leads] matched providers:",
-  matchedProviders.map((p) => `${p.name} (${p.category}, ${p.location})`),
-);
+  console.log(
+    "[leads] matched providers:",
+    matchedProviders.map((p) => `${p.name} (${(p as any).category ?? ""}, ${p.location})`),
+  );
     const assignedProviders = matchedProviders.map((p) => p.name).join(", ");
 
     await createLead({

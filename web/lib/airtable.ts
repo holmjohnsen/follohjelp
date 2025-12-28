@@ -51,6 +51,7 @@ function buildFilterFormula(filters: ProviderFilters) {
 }
 
 type AirtableProvider = Provider & {
+  category?: string[];
   email?: string;
 };
 
