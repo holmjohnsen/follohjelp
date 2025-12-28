@@ -43,7 +43,7 @@ export default function CategoryPage({
         <div className="container">
           <nav className="nav">
             <div className="logo">🏡 Follohjelp</div>
-            <a className="badge" href="/list-din-bedrift">
+            <a className="badge" href="/for-bedrifter">
               List din bedrift
             </a>
           </nav>
