@@ -28,12 +28,13 @@ function resolveCategory(slug: string) {
   return match ?? decoded;
 }
 
-export default function CategoryPage({
+export default async function CategoryPage({
   params,
 }: {
-  params: { category: string };
+  params: Promise<{ category: string }>;
 }) {
-  const initialCategory = resolveCategory(params.category);
+  const { category } = await params;
+  const initialCategory = resolveCategory(category);
 
   return (
     <>
@@ -43,7 +44,7 @@ export default function CategoryPage({
         <div className="container">
           <nav className="nav">
             <div className="logo">🏡 Follohjelp</div>
-            <a className="badge" href="/list-din-bedrift">
+            <a className="badge" href="/for-bedrifter">
               List din bedrift
             </a>
           </nav>

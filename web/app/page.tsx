@@ -38,16 +38,16 @@ export default function Home() {
         <section className="categories">
           <h2>Kategorier</h2>
           <div className="category-grid">
-            <a className="category-pill" href="/kategorier/rorlegger">
+            <a className="category-pill" href="/category">
               Rørlegger
             </a>
-            <a className="category-pill" href="/kategorier/elektriker">
+            <a className="category-pill" href="/category">
               Elektriker
             </a>
-            <a className="category-pill" href="/kategorier/snekker">
+            <a className="category-pill" href="/category">
               Snekker
             </a>
-            <a className="category-pill" href="/kategorier/murer">
+            <a className="category-pill" href="/category">
               Murer
             </a>
           </div>

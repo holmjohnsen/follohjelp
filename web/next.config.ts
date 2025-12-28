@@ -9,6 +9,20 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/list-din-bedrift",
+        destination: "/for-bedrifter",
+        permanent: true,
+      },
+      {
+        source: "/list-din-bedrifter",
+        destination: "/for-bedrifter",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
