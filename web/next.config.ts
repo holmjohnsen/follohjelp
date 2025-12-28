@@ -16,6 +16,11 @@ const nextConfig: NextConfig = {
         destination: "/for-bedrifter",
         permanent: true,
       },
+      {
+        source: "/list-din-bedrifter",
+        destination: "/for-bedrifter",
+        permanent: true,
+      },
     ];
   },
 };
