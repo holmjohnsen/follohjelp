@@ -253,10 +253,11 @@ export async function getCategories() {
         Boolean(activeField);
       if (!isActive) return;
 
+      const slugField = String(fields["slug"] ?? "").trim();
       categories.push({
         id: record.id,
         name,
-        slug: slugifyCategory(name),
+        slug: slugField || slugifyCategory(name),
       });
     });
 
