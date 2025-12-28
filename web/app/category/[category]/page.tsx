@@ -28,12 +28,13 @@ function resolveCategory(slug: string) {
   return match ?? decoded;
 }
 
-export default function CategoryPage({
+export default async function CategoryPage({
   params,
 }: {
-  params: { category: string };
+  params: Promise<{ category: string }>;
 }) {
-  const initialCategory = resolveCategory(params.category);
+  const { category } = await params;
+  const initialCategory = resolveCategory(category);
 
   return (
     <>
