@@ -1,19 +1,16 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import {
-  createPendingProvider,
-  getCategories,
-  getLocations,
-  getProviders,
-} from "@/lib/airtable";
+import { createPendingProvider, getProviderOptions, getProviders } from "@/lib/airtable";
 import { sendEmail } from "@/lib/email";
 
 const providerSchema = z
   .object({
     name: z.string().min(1, "Navn er påkrevd"),
-    categoryId: z.string().optional(),
-    locationId: z.string().optional(),
+    categoryId: z.string().min(1, "Kategori er påkrevd"),
+    locationId: z.string().min(1, "Sted er påkrevd"),
+    categoryOther: z.string().optional(),
+    locationOther: z.string().optional(),
     description: z.string().min(1, "Beskrivelse er påkrevd"),
     email: z.string().email("Ugyldig e-post").optional(),
     phone: z.string().optional(),
@@ -23,30 +20,6 @@ const providerSchema = z
     (data) => (data.email && data.email.length > 0) || (data.phone && data.phone.length > 0),
     { message: "Telefon eller e-post er påkrevd" },
   );
-
-type CachedOptions = {
-  categories: { id: string; name: string }[];
-  locations: { id: string; name: string }[];
-  expires: number;
-};
-
-let cachedOptions: CachedOptions | null = null;
-const OPTIONS_TTL_MS = 10 * 60 * 1000;
-
-async function getOptionsWithCache() {
-  const now = Date.now();
-  if (cachedOptions && cachedOptions.expires > now) {
-    return cachedOptions;
-  }
-  const [categories, locations] = await Promise.all([getCategories(), getLocations()]);
-  const result: CachedOptions = {
-    categories: categories.map((c) => ({ id: c.id, name: c.name })),
-    locations: locations.map((l) => ({ id: l.id, name: l.name })),
-    expires: now + OPTIONS_TTL_MS,
-  };
-  cachedOptions = result;
-  return result;
-}
 
 export async function GET(req: Request) {
   try {
@@ -71,34 +44,56 @@ export async function POST(req: Request) {
     const body = await req.json();
     const parsed = providerSchema.parse(body);
 
-    const { categories, locations } = await getOptionsWithCache();
-    const categoryMatch = parsed.categoryId
-      ? categories.find((c) => c.id === parsed.categoryId)
-      : undefined;
-    const locationMatch = parsed.locationId
-      ? locations.find((l) => l.id === parsed.locationId)
-      : undefined;
+    const { categories, locations } = await getProviderOptions();
+    const categoryMatch = categories.find((c) => c.id === parsed.categoryId);
+    const locationMatch = locations.find((l) => l.id === parsed.locationId);
 
-    const needReview =
-      !parsed.categoryId ||
-      !parsed.locationId ||
-      parsed.categoryId === "OTHER" ||
-      parsed.locationId === "OTHER" ||
-      !categoryMatch ||
-      !locationMatch;
+    if (!parsed.categoryId || !parsed.locationId) {
+      return NextResponse.json(
+        { error: "Kategori og sted er påkrevd" },
+        { status: 400 },
+      );
+    }
 
     const notes: string[] = [];
-    if (!categoryMatch && parsed.categoryId) {
+    let needReview = false;
+    let categoryId: string | undefined;
+    let categoryOther: string | undefined;
+    let locationId: string | undefined;
+    let locationOther: string | undefined;
+
+    if (parsed.categoryId === "OTHER") {
+      categoryOther = parsed.categoryOther?.trim();
+      if (!categoryOther) {
+        return NextResponse.json(
+          { error: "Kategori (annet) er påkrevd" },
+          { status: 400 },
+        );
+      }
+      needReview = true;
+    } else if (categoryMatch) {
+      categoryId = categoryMatch.id;
+    } else {
+      categoryOther = parsed.categoryOther?.trim() || parsed.categoryId;
+      needReview = true;
       notes.push(`Ukjent kategori: ${parsed.categoryId}`);
     }
-    if (!locationMatch && parsed.locationId) {
+
+    if (parsed.locationId === "OTHER") {
+      locationOther = parsed.locationOther?.trim();
+      if (!locationOther) {
+        return NextResponse.json(
+          { error: "Sted (annet) er påkrevd" },
+          { status: 400 },
+        );
+      }
+      needReview = true;
+    } else if (locationMatch) {
+      locationId = locationMatch.id;
+    } else {
+      locationOther = parsed.locationOther?.trim() || parsed.locationId;
+      needReview = true;
       notes.push(`Ukjent sted: ${parsed.locationId}`);
-    }
-    if (!parsed.categoryId) {
-      notes.push("Kategori ikke valgt");
-    }
-    if (!parsed.locationId) {
-      notes.push("Sted ikke valgt");
     }
 
     let url = parsed.url?.trim();
@@ -111,10 +106,10 @@ export async function POST(req: Request) {
 
     await createPendingProvider({
       name: parsed.name,
-      categoryId: categoryMatch ? categoryMatch.id : parsed.categoryId,
-      categoryOther: !categoryMatch ? "ikke valgt" : undefined,
-      locationId: locationMatch ? locationMatch.id : parsed.locationId,
-      locationOther: !locationMatch ? "ikke valgt" : undefined,
+      categoryId,
+      categoryOther,
+      locationId,
+      locationOther,
       description: parsed.description,
       email: parsed.email ?? "",
       phone: parsed.phone,
