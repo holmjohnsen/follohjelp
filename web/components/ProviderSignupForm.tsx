@@ -226,6 +226,16 @@ export default function ProviderSignupForm() {
                 </div>
               ) : null}
             </div>
+          </div>
+
+          <div className="lead-field">
+            <label>Kontaktinformasjon *</label>
+            <span className="results-count">
+              Minst én kontaktmetode må fylles ut.
+            </span>
+          </div>
+
+          <div className="lead-grid">
             <div className="lead-field">
               <label htmlFor="email">E-post</label>
               <input
@@ -242,6 +252,7 @@ export default function ProviderSignupForm() {
           </div>
 
           <div className="lead-field">
+
             <label htmlFor="phone">Telefon</label>
             <input
               id="phone"
