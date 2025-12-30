@@ -97,6 +97,19 @@ export default function ForBedrifterPage() {
       </section>
 
       <section className="fh-section">
+        <h2>Legg inn bedriften</h2>
+        <p className="fh-lead">
+          Skjemaet under går rett til oss. Vi kontakter deg før oppføringen
+          publiseres.
+        </p>
+        <ProviderSignupForm />
+        <p className="fh-note">
+          Vi deler ikke informasjonen din videre og tar kontakt før noe
+          publiseres.
+        </p>
+      </section>
+
+      <section className="fh-section">
         <div className="fh-card">
           <h2>Hvem passer det for?</h2>
           <ul>
@@ -139,19 +152,6 @@ export default function ForBedrifterPage() {
             ))}
           </div>
         </div>
-      </section>
-
-      <section className="fh-section">
-        <h2>Legg inn bedriften</h2>
-        <p className="fh-lead">
-          Skjemaet under går rett til oss. Vi kontakter deg før oppføringen
-          publiseres.
-        </p>
-        <ProviderSignupForm />
-        <p className="fh-note">
-          Vi deler ikke informasjonen din videre og tar kontakt før noe
-          publiseres.
-        </p>
       </section>
 
       <Script
