@@ -22,6 +22,7 @@ const AIRTABLE_CATEGORIES_TABLE = process.env.AIRTABLE_CATEGORIES_TABLE;
 const AIRTABLE_CATEGORIES_VIEW = process.env.AIRTABLE_CATEGORIES_VIEW;
 const AIRTABLE_LOCATIONS_TABLE = process.env.AIRTABLE_LOCATIONS_TABLE;
 const AIRTABLE_LOCATIONS_VIEW = process.env.AIRTABLE_LOCATIONS_VIEW;
+const OPTIONS_TTL_MS = 10 * 60 * 1000;
 
 function ensureEnv(key: string | undefined, name: string) {
   if (!key) {
@@ -65,11 +66,16 @@ type LeadInput = {
 
 type ProviderInput = {
   name: string;
-  categoryId: string;
-  locationId: string;
+  categoryId?: string;
+  categoryOther?: string;
+  locationId?: string;
+  locationOther?: string;
   description: string;
   email: string;
   phone?: string;
+  needReview?: boolean;
+  url?: string;
+  notes?: string;
 };
 
 export type Lead = {
@@ -93,6 +99,14 @@ export type Location = {
   id: string;
   name: string;
 };
+
+type ProviderOptionsCache = {
+  categories: { id: string; name: string }[];
+  locations: { id: string; name: string }[];
+  expires: number;
+};
+
+let providerOptionsCache: ProviderOptionsCache | null = null;
 
 function slugifyCategory(name: string) {
   return name
@@ -154,25 +168,27 @@ async function fetchProviders(filters: ProviderFilters, includeEmail = false) {
     (data.records ?? []).forEach((record) => {
       const fields = record.fields ?? {};
       const name = String(fields["name"] ?? "").trim();
-const categoryField = fields["category"];
-const categoryList = Array.isArray(categoryField)
-  ? categoryField.map((c) => String(c).trim()).filter(Boolean)
-  : [];
-const location = String(fields["location"] ?? "").trim();
-const description = String(fields["description"] ?? "").trim();
-const status = String(fields["status"] ?? "").trim();
+      const categoryField = fields["category"];
+      const categoryList = Array.isArray(categoryField)
+        ? categoryField.map((c) => String(c).trim()).filter(Boolean)
+        : [];
+      const location = String(fields["location"] ?? "").trim();
+      const description = String(fields["description"] ?? "").trim();
+      const status = String(fields["status"] ?? "").trim();
 
-if (status !== "active" || !name) return;
+      if (status !== "active" || !name) {
+        return;
+      }
 
-providers.push({
-  id: record.id,
-  name,
-  category: categoryList,
-  location,
-  description,
-  phone: fields["phone"] ? String(fields["phone"]).trim() : undefined,
-  email: includeEmail && fields["email"] ? String(fields["email"]).trim() : undefined,
-});
+      providers.push({
+        id: record.id,
+        name,
+        category: categoryList,
+        location,
+        description,
+        phone: fields["phone"] ? String(fields["phone"]).trim() : undefined,
+        email: includeEmail && fields["email"] ? String(fields["email"]).trim() : undefined,
+      });
     });
 
     offset = data.offset;
@@ -346,6 +362,33 @@ export async function getLocations() {
 
   locations.sort((a, b) => a.name.localeCompare(b.name, "nb"));
   return locations;
+}
+
+export async function getProviderOptions() {
+  const now = Date.now();
+  if (providerOptionsCache && providerOptionsCache.expires > now) {
+    return providerOptionsCache;
+  }
+
+  const [categories, locations] = await Promise.all([
+    getCategories(),
+    getLocations(),
+  ]);
+
+  const filteredCategories = categories
+    .filter((c) => c.name !== "Ikke valgt")
+    .map((c) => ({ id: c.id, name: c.name }));
+  const filteredLocations = locations
+    .filter((l) => l.name !== "Ikke valgt")
+    .map((l) => ({ id: l.id, name: l.name }));
+
+  providerOptionsCache = {
+    categories: filteredCategories,
+    locations: filteredLocations,
+    expires: now + OPTIONS_TTL_MS,
+  };
+
+  return providerOptionsCache;
 }
 
 export async function createLead(lead: LeadInput) {
@@ -589,27 +632,39 @@ export async function createPendingProvider(provider: ProviderInput) {
     "AIRTABLE_PROVIDERS_TABLE",
   );
 
-  const payload = {
-    fields: {
-      name: provider.name,
-      category:
-        provider.categoryId && provider.categoryId !== "OTHER"
-          ? [provider.categoryId]
-          : undefined,
-      category_other:
-        provider.categoryId === "OTHER" ? "ikke valgt" : undefined,
-      location:
-        provider.locationId && provider.locationId !== "OTHER"
-          ? [provider.locationId]
-          : undefined,
-      location_other:
-        provider.locationId === "OTHER" ? "ikke valgt" : undefined,
-      description: provider.description,
-      email: provider.email,
-      phone: provider.phone ?? "",
-      status: "pending",
-    },
+  const fields: Record<string, unknown> = {
+    name: provider.name,
+    description: provider.description,
+    email: provider.email,
+    phone: provider.phone ?? "",
+    status: "pending",
   };
+
+  if (provider.url) {
+    fields.url = provider.url;
+  }
+
+  if (provider.categoryId && provider.categoryId !== "OTHER") {
+    fields.category = [provider.categoryId];
+  } else if (provider.categoryOther) {
+    fields.category_other = provider.categoryOther;
+  }
+
+  if (provider.locationId && provider.locationId !== "OTHER") {
+    fields.location = [provider.locationId];
+  } else if (provider.locationOther) {
+    fields.location_other = provider.locationOther;
+  }
+
+  if (provider.needReview) {
+    fields.need_review = true;
+  }
+
+  if (provider.notes) {
+    fields.notes = provider.notes;
+  }
+
+  const payload = { fields };
 
   const response = await fetch(
     `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(table)}`,

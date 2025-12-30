@@ -8,9 +8,12 @@ type FormState = {
   name: string;
   categoryId: string;
   locationId: string;
+  categoryOther: string;
+  locationOther: string;
   description: string;
   email: string;
   phone: string;
+  url: string;
   consent: boolean;
 };
 
@@ -18,9 +21,12 @@ const initialState: FormState = {
   name: "",
   categoryId: "",
   locationId: "",
+  categoryOther: "",
+  locationOther: "",
   description: "",
   email: "",
   phone: "",
+  url: "",
   consent: false,
 };
 
@@ -39,7 +45,7 @@ export default function ProviderSignupForm() {
   useEffect(() => {
     async function loadOptions() {
       try {
-        const res = await fetch("/api/meta");
+        const res = await fetch("/api/providers/options");
         const data = (await res.json()) as {
           categories?: Option[];
           locations?: Option[];
@@ -57,10 +63,20 @@ export default function ProviderSignupForm() {
     const newErrors: Record<string, string> = {};
     if (!form.name) newErrors.name = "Navn er påkrevd";
     if (!form.categoryId) newErrors.categoryId = "Velg kategori";
+    if (form.categoryId === "OTHER" && !form.categoryOther.trim()) {
+      newErrors.categoryOther = "Skriv inn kategori";
+    }
     if (!form.locationId) newErrors.locationId = "Velg sted";
+    if (form.locationId === "OTHER" && !form.locationOther.trim()) {
+      newErrors.locationOther = "Skriv inn sted";
+    }
     if (!form.description) newErrors.description = "Beskrivelse er påkrevd";
-    if (!form.email) newErrors.email = "E-post er påkrevd";
-    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+    const hasEmail = form.email.trim().length > 0;
+    const hasPhone = form.phone.trim().length > 0;
+    if (!hasEmail && !hasPhone) {
+      newErrors.contact = "Telefon eller e-post er påkrevd";
+    }
+    if (hasEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
       newErrors.email = "Ugyldig e-post";
     }
     if (!form.consent) newErrors.consent = "Du må samtykke";
@@ -139,7 +155,6 @@ export default function ProviderSignupForm() {
                 value={form.categoryId}
                 onChange={(e) => handleChange("categoryId", e.target.value)}
                 disabled={isDisabled}
-                required
               >
                 <option value="">Velg kategori</option>
                 {categories.map((cat) => (
@@ -150,6 +165,22 @@ export default function ProviderSignupForm() {
               </select>
               {errors.categoryId ? (
                 <span className="lead-error">{errors.categoryId}</span>
+              ) : null}
+              {form.categoryId === "OTHER" ? (
+                <div className="lead-field">
+                  <label htmlFor="categoryOther">Annen kategori *</label>
+                  <input
+                    id="categoryOther"
+                    type="text"
+                    value={form.categoryOther}
+                    onChange={(e) => handleChange("categoryOther", e.target.value)}
+                    disabled={isDisabled}
+                    required
+                  />
+                  {errors.categoryOther ? (
+                    <span className="lead-error">{errors.categoryOther}</span>
+                  ) : null}
+                </div>
               ) : null}
             </div>
           </div>
@@ -162,7 +193,6 @@ export default function ProviderSignupForm() {
                 value={form.locationId}
                 onChange={(e) => handleChange("locationId", e.target.value)}
                 disabled={isDisabled}
-                required
               >
                 <option value="">Velg sted</option>
                 {locations.map((loc) => (
@@ -173,6 +203,22 @@ export default function ProviderSignupForm() {
               </select>
               {errors.locationId ? (
                 <span className="lead-error">{errors.locationId}</span>
+              ) : null}
+              {form.locationId === "OTHER" ? (
+                <div className="lead-field">
+                  <label htmlFor="locationOther">Annet sted *</label>
+                  <input
+                    id="locationOther"
+                    type="text"
+                    value={form.locationOther}
+                    onChange={(e) => handleChange("locationOther", e.target.value)}
+                    disabled={isDisabled}
+                    required
+                  />
+                  {errors.locationOther ? (
+                    <span className="lead-error">{errors.locationOther}</span>
+                  ) : null}
+                </div>
               ) : null}
             </div>
             <div className="lead-field">
@@ -198,6 +244,21 @@ export default function ProviderSignupForm() {
               type="tel"
               value={form.phone}
               onChange={(e) => handleChange("phone", e.target.value)}
+              disabled={isDisabled}
+            />
+            {errors.contact ? (
+              <span className="lead-error">{errors.contact}</span>
+            ) : null}
+          </div>
+
+          <div className="lead-field">
+            <label htmlFor="url">Nettside (valgfritt)</label>
+            <input
+              id="url"
+              type="text"
+              placeholder="https://firma.no"
+              value={form.url}
+              onChange={(e) => handleChange("url", e.target.value)}
               disabled={isDisabled}
             />
           </div>
