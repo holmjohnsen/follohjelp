@@ -269,7 +269,6 @@ export default function ProviderSignupForm() {
               value={form.description}
               onChange={(e) => handleChange("description", e.target.value)}
               disabled={isDisabled}
-              required
             />
             {errors.description ? (
               <span className="lead-error">{errors.description}</span>
