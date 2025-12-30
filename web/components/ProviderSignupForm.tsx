@@ -222,7 +222,6 @@ export default function ProviderSignupForm() {
                 </div>
               ) : null}
             </div>
-
             <div className="lead-field">
               <label htmlFor="url">Nettside (valgfritt)</label>
               <input
@@ -239,6 +238,7 @@ export default function ProviderSignupForm() {
           <div className="lead-field">
             <h3>Kontakt</h3>
             <p className="results-count">Minst én kontaktmetode må fylles ut.</p>
+
           </div>
 
           <div className="lead-grid">
@@ -265,7 +265,11 @@ export default function ProviderSignupForm() {
                 onChange={(e) => handleChange("phone", e.target.value)}
                 disabled={isDisabled}
               />
+              {errors.contact ? (
+                <span className="lead-error">{errors.contact}</span>
+              ) : null}
             </div>
+
           </div>
           {errors.contact ? (
             <div className="lead-field">
