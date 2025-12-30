@@ -23,6 +23,13 @@ const AIRTABLE_CATEGORIES_VIEW = process.env.AIRTABLE_CATEGORIES_VIEW;
 const AIRTABLE_LOCATIONS_TABLE = process.env.AIRTABLE_LOCATIONS_TABLE;
 const AIRTABLE_LOCATIONS_VIEW = process.env.AIRTABLE_LOCATIONS_VIEW;
 const OPTIONS_TTL_MS = 10 * 60 * 1000;
+const PROVIDERS_FIELDS = {
+  needReview: "need_review",
+  categoryOther: "category_other",
+  locationOther: "location_other",
+  url: "url",
+  notes: "notes",
+} as const;
 
 function ensureEnv(key: string | undefined, name: string) {
   if (!key) {
@@ -641,27 +648,27 @@ export async function createPendingProvider(provider: ProviderInput) {
   };
 
   if (provider.url) {
-    fields.url = provider.url;
+    fields[PROVIDERS_FIELDS.url] = provider.url;
   }
 
   if (provider.categoryId && provider.categoryId !== "OTHER") {
     fields.category = [provider.categoryId];
   } else if (provider.categoryOther) {
-    fields.category_other = provider.categoryOther;
+    fields[PROVIDERS_FIELDS.categoryOther] = provider.categoryOther;
   }
 
   if (provider.locationId && provider.locationId !== "OTHER") {
     fields.location = [provider.locationId];
   } else if (provider.locationOther) {
-    fields.location_other = provider.locationOther;
+    fields[PROVIDERS_FIELDS.locationOther] = provider.locationOther;
   }
 
   if (provider.needReview) {
-    fields.need_review = true;
+    fields[PROVIDERS_FIELDS.needReview] = true;
   }
 
   if (provider.notes) {
-    fields.notes = provider.notes;
+    fields[PROVIDERS_FIELDS.notes] = provider.notes;
   }
 
   const payload = { fields };
