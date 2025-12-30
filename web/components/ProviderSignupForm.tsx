@@ -134,9 +134,12 @@ export default function ProviderSignupForm() {
           <p>Send inn bedriften din for gratis synlighet i Follo.</p>
         </div>
         <form className="lead-form" onSubmit={handleSubmit} noValidate>
+          <div className="lead-field">
+            <h3>Om bedriften</h3>
+          </div>
           <div className="lead-grid">
             <div className="lead-field">
-              <label htmlFor="name">Bedriftsnavn *</label>
+              <label htmlFor="name">Bedriftsnavn</label>
               <input
                 id="name"
                 type="text"
@@ -149,7 +152,7 @@ export default function ProviderSignupForm() {
               ) : null}
             </div>
             <div className="lead-field">
-              <label htmlFor="category">Kategori *</label>
+              <label htmlFor="category">Kategori</label>
               <select
                 id="category"
                 value={form.categoryId}
@@ -168,7 +171,7 @@ export default function ProviderSignupForm() {
               ) : null}
               {form.categoryId === "OTHER" ? (
                 <div className="lead-field">
-                  <label htmlFor="categoryOther">Annen kategori *</label>
+                  <label htmlFor="categoryOther">Annen kategori</label>
                   <input
                     id="categoryOther"
                     type="text"
@@ -186,7 +189,7 @@ export default function ProviderSignupForm() {
 
           <div className="lead-grid">
             <div className="lead-field">
-              <label htmlFor="location">Sted *</label>
+              <label htmlFor="location">Sted</label>
               <select
                 id="location"
                 value={form.locationId}
@@ -205,7 +208,7 @@ export default function ProviderSignupForm() {
               ) : null}
               {form.locationId === "OTHER" ? (
                 <div className="lead-field">
-                  <label htmlFor="locationOther">Annet sted *</label>
+                  <label htmlFor="locationOther">Annet sted</label>
                   <input
                     id="locationOther"
                     type="text"
@@ -219,13 +222,23 @@ export default function ProviderSignupForm() {
                 </div>
               ) : null}
             </div>
+            <div className="lead-field">
+              <label htmlFor="url">Nettside (valgfritt)</label>
+              <input
+                id="url"
+                type="text"
+                placeholder="https://firma.no"
+                value={form.url}
+                onChange={(e) => handleChange("url", e.target.value)}
+                disabled={isDisabled}
+              />
+            </div>
           </div>
 
           <div className="lead-field">
-            <label>Kontaktinformasjon *</label>
-            <span className="results-count">
-              Minst én kontaktmetode må fylles ut.
-            </span>
+            <h3>Kontakt</h3>
+            <p className="results-count">Minst én kontaktmetode må fylles ut.</p>
+
           </div>
 
           <div className="lead-grid">
@@ -242,37 +255,34 @@ export default function ProviderSignupForm() {
                 <span className="lead-error">{errors.email}</span>
               ) : null}
             </div>
+
+            <div className="lead-field">
+              <label htmlFor="phone">Telefon</label>
+              <input
+                id="phone"
+                type="tel"
+                value={form.phone}
+                onChange={(e) => handleChange("phone", e.target.value)}
+                disabled={isDisabled}
+              />
+              {errors.contact ? (
+                <span className="lead-error">{errors.contact}</span>
+              ) : null}
+            </div>
+
           </div>
-
-          <div className="lead-field">
-
-            <label htmlFor="phone">Telefon</label>
-            <input
-              id="phone"
-              type="tel"
-              value={form.phone}
-              onChange={(e) => handleChange("phone", e.target.value)}
-              disabled={isDisabled}
-            />
-            {errors.contact ? (
+          {errors.contact ? (
+            <div className="lead-field">
               <span className="lead-error">{errors.contact}</span>
-            ) : null}
+            </div>
+          ) : null}
+
+          <div className="lead-field">
+            <h3>Kort om dere</h3>
           </div>
 
           <div className="lead-field">
-            <label htmlFor="url">Nettside (valgfritt)</label>
-            <input
-              id="url"
-              type="text"
-              placeholder="https://firma.no"
-              value={form.url}
-              onChange={(e) => handleChange("url", e.target.value)}
-              disabled={isDisabled}
-            />
-          </div>
-
-          <div className="lead-field">
-            <label htmlFor="description">Beskrivelse *</label>
+            <label htmlFor="description">Beskrivelse</label>
             <textarea
               id="description"
               rows={4}
