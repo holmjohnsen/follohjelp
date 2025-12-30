@@ -184,13 +184,6 @@ export default function ProviderSignupForm() {
             </div>
           </div>
 
-          <div className="lead-field">
-            <label>Kontaktinformasjon *</label>
-            <span className="results-count">
-              Minst én kontaktmetode må fylles ut.
-            </span>
-          </div>
-
           <div className="lead-grid">
             <div className="lead-field">
               <label htmlFor="location">Sted *</label>
