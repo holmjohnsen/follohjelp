@@ -61,25 +61,26 @@ export default function ProviderSignupForm() {
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-    if (!form.name) newErrors.name = "Navn er påkrevd";
-    if (!form.categoryId) newErrors.categoryId = "Velg kategori";
+    const trimmedName = form.name.trim();
+    if (!trimmedName) newErrors.name = "Skriv inn bedriftsnavn.";
+    if (!form.categoryId) newErrors.categoryId = "Velg kategori.";
     if (form.categoryId === "OTHER" && !form.categoryOther.trim()) {
-      newErrors.categoryOther = "Skriv inn kategori";
+      newErrors.categoryOther = "Skriv inn kategori.";
     }
-    if (!form.locationId) newErrors.locationId = "Velg sted";
+    if (!form.locationId) newErrors.locationId = "Velg sted.";
     if (form.locationId === "OTHER" && !form.locationOther.trim()) {
-      newErrors.locationOther = "Skriv inn sted";
+      newErrors.locationOther = "Skriv inn sted.";
     }
     if (!form.description) newErrors.description = "Beskrivelse er påkrevd";
     const hasEmail = form.email.trim().length > 0;
     const hasPhone = form.phone.trim().length > 0;
     if (!hasEmail && !hasPhone) {
-      newErrors.contact = "Telefon eller e-post er påkrevd";
+      newErrors.contact = "Fyll inn enten telefon eller e-post.";
     }
     if (hasEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      newErrors.email = "Ugyldig e-post";
+      newErrors.email = "Skriv inn en gyldig e-postadresse.";
     }
-    if (!form.consent) newErrors.consent = "Du må samtykke";
+    if (!form.consent) newErrors.consent = "Du må samtykke før du kan sende inn.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -132,7 +133,7 @@ export default function ProviderSignupForm() {
           <h2>List din bedrift</h2>
           <p>Send inn bedriften din for gratis synlighet i Follo.</p>
         </div>
-        <form className="lead-form" onSubmit={handleSubmit}>
+        <form className="lead-form" onSubmit={handleSubmit} noValidate>
           <div className="lead-grid">
             <div className="lead-field">
               <label htmlFor="name">Bedriftsnavn *</label>
@@ -142,7 +143,6 @@ export default function ProviderSignupForm() {
                 value={form.name}
                 onChange={(e) => handleChange("name", e.target.value)}
                 disabled={isDisabled}
-                required
               />
               {errors.name ? (
                 <span className="lead-error">{errors.name}</span>
@@ -175,7 +175,6 @@ export default function ProviderSignupForm() {
                     value={form.categoryOther}
                     onChange={(e) => handleChange("categoryOther", e.target.value)}
                     disabled={isDisabled}
-                    required
                   />
                   {errors.categoryOther ? (
                     <span className="lead-error">{errors.categoryOther}</span>
@@ -213,7 +212,6 @@ export default function ProviderSignupForm() {
                     value={form.locationOther}
                     onChange={(e) => handleChange("locationOther", e.target.value)}
                     disabled={isDisabled}
-                    required
                   />
                   {errors.locationOther ? (
                     <span className="lead-error">{errors.locationOther}</span>
@@ -229,7 +227,6 @@ export default function ProviderSignupForm() {
                 value={form.email}
                 onChange={(e) => handleChange("email", e.target.value)}
                 disabled={isDisabled}
-                required
               />
               {errors.email ? (
                 <span className="lead-error">{errors.email}</span>
@@ -272,7 +269,6 @@ export default function ProviderSignupForm() {
               value={form.description}
               onChange={(e) => handleChange("description", e.target.value)}
               disabled={isDisabled}
-              required
             />
             {errors.description ? (
               <span className="lead-error">{errors.description}</span>
@@ -286,7 +282,6 @@ export default function ProviderSignupForm() {
                 checked={form.consent}
                 onChange={(e) => handleChange("consent", e.target.checked)}
                 disabled={isDisabled}
-                required
               />
               <span>
                 Jeg samtykker til at Follohjelp kan lagre opplysningene og kontakte meg ved behov.

@@ -499,6 +499,19 @@ footer {
   line-height: 1.4;
 }
 
+.lead-form input[type="text"],
+.lead-form input[type="email"],
+.lead-form input[type="tel"],
+.lead-form input[type="url"],
+.lead-form select,
+.lead-form textarea {
+  appearance: none;
+  -webkit-appearance: none;
+  min-height: 44px;
+  padding: 12px 12px;
+  line-height: 1.4;
+}
+
 .lead-field input,
 .lead-field select {
   min-height: 44px;
