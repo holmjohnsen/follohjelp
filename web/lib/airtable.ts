@@ -15,6 +15,7 @@ export type Provider = {
 const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
 const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
 const AIRTABLE_PROVIDERS_TABLE = process.env.AIRTABLE_PROVIDERS_TABLE;
+const AIRTABLE_PROVIDERS_VIEW = process.env.AIRTABLE_PROVIDERS_VIEW;
 const AIRTABLE_LEADS_TABLE = process.env.AIRTABLE_LEADS_TABLE ?? "Leads";
 const AIRTABLE_ASSIGNED_PROVIDERS_FIELD =
   process.env.AIRTABLE_ASSIGNED_PROVIDERS_FIELD ?? "assigned_providers";
@@ -42,12 +43,22 @@ function escapeFormulaValue(value: string) {
   return value.replace(/"/g, '\\"');
 }
 
-function buildFilterFormula(filters: ProviderFilters) {
-  const clauses = [`{status}="active"`];
+function buildFilterFormula(
+  filters: ProviderFilters,
+  includeStatus = true,
+) {
+  const clauses: string[] = [];
+  if (includeStatus) {
+    clauses.push(`{status}="active"`);
+  }
   // NB: category is a linked record; text filter here would return 0 rows. Category filtering is handled elsewhere.
 
   if (filters.location && filters.location !== "Alle") {
     clauses.push(`{location}="${escapeFormulaValue(filters.location)}"`);
+  }
+
+  if (clauses.length === 0) {
+    return "";
   }
 
   if (clauses.length === 1) {
@@ -131,15 +142,24 @@ async function fetchProviders(filters: ProviderFilters, includeEmail = false) {
     AIRTABLE_PROVIDERS_TABLE ?? "Providers",
     "AIRTABLE_PROVIDERS_TABLE",
   );
+  const useView = Boolean(AIRTABLE_PROVIDERS_VIEW?.trim());
 
   const providers: AirtableProvider[] = [];
   let offset: string | undefined;
 
   do {
+    const filterByFormula = buildFilterFormula(filters, !useView);
     const searchParams = new URLSearchParams({
       pageSize: "100",
-      filterByFormula: buildFilterFormula(filters),
     });
+
+    if (useView) {
+      searchParams.set("view", AIRTABLE_PROVIDERS_VIEW!.trim());
+    }
+
+    if (filterByFormula) {
+      searchParams.set("filterByFormula", filterByFormula);
+    }
 
     if (offset) {
       searchParams.set("offset", offset);
@@ -506,6 +526,7 @@ async function fetchProvidersByFormula(
     AIRTABLE_PROVIDERS_TABLE ?? "Providers",
     "AIRTABLE_PROVIDERS_TABLE",
   );
+  const useView = Boolean(AIRTABLE_PROVIDERS_VIEW?.trim());
 
   const providers: AirtableProvider[] = [];
   let offset: string | undefined;
@@ -515,6 +536,10 @@ async function fetchProvidersByFormula(
       pageSize: "100",
       filterByFormula,
     });
+
+    if (useView) {
+      searchParams.set("view", AIRTABLE_PROVIDERS_VIEW!.trim());
+    }
 
     if (offset) {
       searchParams.set("offset", offset);
@@ -586,8 +611,12 @@ export async function getProvidersByCategorySlug(slug: string) {
     return { category: null, providers: [] as Provider[] };
   }
 
+  const useView = Boolean(AIRTABLE_PROVIDERS_VIEW?.trim());
   const categoryNameEscaped = escapeFormulaValue(category.name);
-  const filterFormula = `AND({status}="active", FIND(",${categoryNameEscaped},", "," & ARRAYJOIN({category}, ",") & ",")>0)`;
+  const categoryMatch = `FIND(",${categoryNameEscaped},", "," & ARRAYJOIN({category}, ",") & ",")>0`;
+  const filterFormula = useView
+    ? categoryMatch
+    : `AND({status}="active", ${categoryMatch})`;
   const providersByLinked: AirtableProvider[] = await fetchProvidersByFormula(
     filterFormula,
     false,
