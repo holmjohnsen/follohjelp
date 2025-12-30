@@ -8,9 +8,12 @@ type FormState = {
   name: string;
   categoryId: string;
   locationId: string;
+  categoryOther: string;
+  locationOther: string;
   description: string;
   email: string;
   phone: string;
+  url: string;
   consent: boolean;
 };
 
@@ -18,9 +21,12 @@ const initialState: FormState = {
   name: "",
   categoryId: "",
   locationId: "",
+  categoryOther: "",
+  locationOther: "",
   description: "",
   email: "",
   phone: "",
+  url: "",
   consent: false,
 };
 
@@ -56,6 +62,14 @@ export default function ProviderSignupForm() {
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (!form.name) newErrors.name = "Navn er påkrevd";
+    if (!form.categoryId) newErrors.categoryId = "Velg kategori";
+    if (form.categoryId === "OTHER" && !form.categoryOther.trim()) {
+      newErrors.categoryOther = "Skriv inn kategori";
+    }
+    if (!form.locationId) newErrors.locationId = "Velg sted";
+    if (form.locationId === "OTHER" && !form.locationOther.trim()) {
+      newErrors.locationOther = "Skriv inn sted";
+    }
     if (!form.description) newErrors.description = "Beskrivelse er påkrevd";
     const hasEmail = form.email.trim().length > 0;
     const hasPhone = form.phone.trim().length > 0;
@@ -152,6 +166,22 @@ export default function ProviderSignupForm() {
               {errors.categoryId ? (
                 <span className="lead-error">{errors.categoryId}</span>
               ) : null}
+              {form.categoryId === "OTHER" ? (
+                <div className="lead-field">
+                  <label htmlFor="categoryOther">Annen kategori *</label>
+                  <input
+                    id="categoryOther"
+                    type="text"
+                    value={form.categoryOther}
+                    onChange={(e) => handleChange("categoryOther", e.target.value)}
+                    disabled={isDisabled}
+                    required
+                  />
+                  {errors.categoryOther ? (
+                    <span className="lead-error">{errors.categoryOther}</span>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
           </div>
 
@@ -173,6 +203,22 @@ export default function ProviderSignupForm() {
               </select>
               {errors.locationId ? (
                 <span className="lead-error">{errors.locationId}</span>
+              ) : null}
+              {form.locationId === "OTHER" ? (
+                <div className="lead-field">
+                  <label htmlFor="locationOther">Annet sted *</label>
+                  <input
+                    id="locationOther"
+                    type="text"
+                    value={form.locationOther}
+                    onChange={(e) => handleChange("locationOther", e.target.value)}
+                    disabled={isDisabled}
+                    required
+                  />
+                  {errors.locationOther ? (
+                    <span className="lead-error">{errors.locationOther}</span>
+                  ) : null}
+                </div>
               ) : null}
             </div>
             <div className="lead-field">
@@ -203,6 +249,18 @@ export default function ProviderSignupForm() {
             {errors.contact ? (
               <span className="lead-error">{errors.contact}</span>
             ) : null}
+          </div>
+
+          <div className="lead-field">
+            <label htmlFor="url">Nettside (valgfritt)</label>
+            <input
+              id="url"
+              type="text"
+              placeholder="https://firma.no"
+              value={form.url}
+              onChange={(e) => handleChange("url", e.target.value)}
+              disabled={isDisabled}
+            />
           </div>
 
           <div className="lead-field">
