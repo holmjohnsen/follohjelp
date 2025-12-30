@@ -184,13 +184,6 @@ export default function ProviderSignupForm() {
             </div>
           </div>
 
-          <div className="lead-field">
-            <label>Kontaktinformasjon *</label>
-            <span className="results-count">
-              Minst én kontaktmetode må fylles ut.
-            </span>
-          </div>
-
           <div className="lead-grid">
             <div className="lead-field">
               <label htmlFor="location">Sted *</label>
@@ -226,19 +219,25 @@ export default function ProviderSignupForm() {
                 </div>
               ) : null}
             </div>
-            <div className="lead-field">
-              <label htmlFor="email">E-post</label>
-              <input
-                id="email"
-                type="email"
-                value={form.email}
-                onChange={(e) => handleChange("email", e.target.value)}
-                disabled={isDisabled}
-              />
-              {errors.email ? (
-                <span className="lead-error">{errors.email}</span>
-              ) : null}
-            </div>
+          </div>
+
+          <div className="lead-field">
+            <label>Kontaktinformasjon *</label>
+            <span className="results-count">
+              Minst én kontaktmetode må fylles ut.
+            </span>
+          </div>
+
+          <div className="lead-field">
+            <label htmlFor="email">E-post</label>
+            <input
+              id="email"
+              type="email"
+              value={form.email}
+              onChange={(e) => handleChange("email", e.target.value)}
+              disabled={isDisabled}
+            />
+            {errors.email ? <span className="lead-error">{errors.email}</span> : null}
           </div>
 
           <div className="lead-field">
