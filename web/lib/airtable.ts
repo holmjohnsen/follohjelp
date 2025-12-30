@@ -22,6 +22,7 @@ const AIRTABLE_CATEGORIES_TABLE = process.env.AIRTABLE_CATEGORIES_TABLE;
 const AIRTABLE_CATEGORIES_VIEW = process.env.AIRTABLE_CATEGORIES_VIEW;
 const AIRTABLE_LOCATIONS_TABLE = process.env.AIRTABLE_LOCATIONS_TABLE;
 const AIRTABLE_LOCATIONS_VIEW = process.env.AIRTABLE_LOCATIONS_VIEW;
+const OPTIONS_TTL_MS = 10 * 60 * 1000;
 
 function ensureEnv(key: string | undefined, name: string) {
   if (!key) {
@@ -98,6 +99,14 @@ export type Location = {
   id: string;
   name: string;
 };
+
+type ProviderOptionsCache = {
+  categories: { id: string; name: string }[];
+  locations: { id: string; name: string }[];
+  expires: number;
+};
+
+let providerOptionsCache: ProviderOptionsCache | null = null;
 
 function slugifyCategory(name: string) {
   return name
@@ -353,6 +362,33 @@ export async function getLocations() {
 
   locations.sort((a, b) => a.name.localeCompare(b.name, "nb"));
   return locations;
+}
+
+export async function getProviderOptions() {
+  const now = Date.now();
+  if (providerOptionsCache && providerOptionsCache.expires > now) {
+    return providerOptionsCache;
+  }
+
+  const [categories, locations] = await Promise.all([
+    getCategories(),
+    getLocations(),
+  ]);
+
+  const filteredCategories = categories
+    .filter((c) => c.name !== "Ikke valgt")
+    .map((c) => ({ id: c.id, name: c.name }));
+  const filteredLocations = locations
+    .filter((l) => l.name !== "Ikke valgt")
+    .map((l) => ({ id: l.id, name: l.name }));
+
+  providerOptionsCache = {
+    categories: filteredCategories,
+    locations: filteredLocations,
+    expires: now + OPTIONS_TTL_MS,
+  };
+
+  return providerOptionsCache;
 }
 
 export async function createLead(lead: LeadInput) {
