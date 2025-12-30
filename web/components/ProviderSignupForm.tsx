@@ -39,7 +39,7 @@ export default function ProviderSignupForm() {
   useEffect(() => {
     async function loadOptions() {
       try {
-        const res = await fetch("/api/meta");
+        const res = await fetch("/api/providers/options");
         const data = (await res.json()) as {
           categories?: Option[];
           locations?: Option[];
@@ -56,11 +56,13 @@ export default function ProviderSignupForm() {
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (!form.name) newErrors.name = "Navn er påkrevd";
-    if (!form.categoryId) newErrors.categoryId = "Velg kategori";
-    if (!form.locationId) newErrors.locationId = "Velg sted";
     if (!form.description) newErrors.description = "Beskrivelse er påkrevd";
-    if (!form.email) newErrors.email = "E-post er påkrevd";
-    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+    const hasEmail = form.email.trim().length > 0;
+    const hasPhone = form.phone.trim().length > 0;
+    if (!hasEmail && !hasPhone) {
+      newErrors.contact = "Telefon eller e-post er påkrevd";
+    }
+    if (hasEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
       newErrors.email = "Ugyldig e-post";
     }
     if (!form.consent) newErrors.consent = "Du må samtykke";
@@ -139,7 +141,6 @@ export default function ProviderSignupForm() {
                 value={form.categoryId}
                 onChange={(e) => handleChange("categoryId", e.target.value)}
                 disabled={isDisabled}
-                required
               >
                 <option value="">Velg kategori</option>
                 {categories.map((cat) => (
@@ -162,7 +163,6 @@ export default function ProviderSignupForm() {
                 value={form.locationId}
                 onChange={(e) => handleChange("locationId", e.target.value)}
                 disabled={isDisabled}
-                required
               >
                 <option value="">Velg sted</option>
                 {locations.map((loc) => (
@@ -200,6 +200,9 @@ export default function ProviderSignupForm() {
               onChange={(e) => handleChange("phone", e.target.value)}
               disabled={isDisabled}
             />
+            {errors.contact ? (
+              <span className="lead-error">{errors.contact}</span>
+            ) : null}
           </div>
 
           <div className="lead-field">
