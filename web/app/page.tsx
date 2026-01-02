@@ -1,4 +1,5 @@
 import CookieBanner from "@/components/CookieBanner";
+import HomeSearchBar from "@/components/HomeSearchBar";
 
 export default function Home() {
   return (
@@ -18,16 +19,7 @@ export default function Home() {
             Dekker Drøbak, Ås, Ski, Vestby, Nesodden og omegn.
           </p>
 
-          <div className="search-bar" style={{ marginTop: "16px" }}>
-            <input
-              type="text"
-              placeholder="Søk etter håndverker eller fagfelt"
-              aria-label="Søk etter håndverker eller fagfelt"
-            />
-            <button className="search-btn" type="button">
-              Søk
-            </button>
-          </div>
+          <HomeSearchBar />
 
           <p className="results-count">
             🛠️ Follohjelp er i oppstart og bygges steg for steg. Tips oss gjerne
