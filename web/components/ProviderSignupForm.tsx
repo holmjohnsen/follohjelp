@@ -222,6 +222,26 @@ export default function ProviderSignupForm() {
                 </div>
               ) : null}
             </div>
+
+            <div className="lead-field">
+              <label htmlFor="url">Nettside (valgfritt)</label>
+              <input
+                id="url"
+                type="text"
+                placeholder="https://firma.no"
+                value={form.url}
+                onChange={(e) => handleChange("url", e.target.value)}
+                disabled={isDisabled}
+              />
+            </div>
+          </div>
+
+          <div className="lead-field">
+            <h3>Kontakt</h3>
+            <p className="results-count">Minst én kontaktmetode må fylles ut.</p>
+          </div>
+
+          <div className="lead-grid">
             <div className="lead-field">
               <label htmlFor="url">Nettside (valgfritt)</label>
               <input
@@ -265,9 +285,7 @@ export default function ProviderSignupForm() {
                 onChange={(e) => handleChange("phone", e.target.value)}
                 disabled={isDisabled}
               />
-              {errors.contact ? (
-                <span className="lead-error">{errors.contact}</span>
-              ) : null}
+
             </div>
 
           </div>
