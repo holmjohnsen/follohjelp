@@ -16,12 +16,18 @@ export async function generateMetadata({
   if (!match) {
     return {
       title: "Kategori ikke funnet | Follohjelp",
+      description: "Kategorien finnes ikke.",
     };
   }
 
+  const nameLower = match.name.toLowerCase();
+
   return {
-    title: `${match.name} i Follo | Follohjelp`,
-    description: `Finn lokale ${match.name.toLowerCase()} i Follo.`,
+    title: `${match.name} i Follo – lokale ${nameLower} | Follohjelp`,
+    description: `Finn lokale ${nameLower} i Follo. Se bedrifter i Drøbak, Ås, Ski, Vestby, Nesodden og omegn.`,
+    alternates: {
+      canonical: `/category/${match.slug}`,
+    },
   };
 }
 

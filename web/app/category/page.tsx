@@ -3,6 +3,16 @@ export const dynamic = "force-dynamic";
 import { getCategories } from "@/lib/airtable";
 import Link from "next/link";
 import HomeSearchBar from "@/components/HomeSearchBar";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Kategorier i Follo – finn lokale håndverkere | Follohjelp",
+  description:
+    "Velg fagområde og finn lokale håndverkere i Follo. Se rørlegger, elektriker, snekker, murer og flere.",
+  alternates: {
+    canonical: "/category",
+  },
+};
 
 export default async function CategoryLandingPage() {
   const categories = await getCategories();
