@@ -9,11 +9,20 @@ type Category = {
   slug: string;
 };
 
-export default function HomeSearchBar() {
+type Props = {
+  initialQuery?: string;
+  placeholder?: string;
+};
+
+export default function HomeSearchBar({ initialQuery = "", placeholder }: Props) {
   const router = useRouter();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    setQuery(initialQuery);
+  }, [initialQuery]);
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -69,7 +78,7 @@ export default function HomeSearchBar() {
     <form className="search-bar" style={{ marginTop: "16px" }} onSubmit={handleSubmit}>
       <input
         type="text"
-        placeholder="Søk etter håndverker eller fagfelt"
+        placeholder={placeholder ?? "Søk etter håndverker eller fagfelt"}
         aria-label="Søk etter håndverker eller fagfelt"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
