@@ -108,6 +108,13 @@ export default async function CategoryPage({
           ) : null}
         </div>
       </section>
+
+      <section className="fh-section">
+        <p className="results-count">
+          Ser du etter flere håndverkere?{" "}
+          <a href="/category">Se alle fagområder</a>
+        </p>
+      </section>
     </main>
   );
 }
