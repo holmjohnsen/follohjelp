@@ -3,6 +3,10 @@ export const dynamic = "force-dynamic";
 import { getCategories } from "@/lib/airtable";
 import Link from "next/link";
 import HomeSearchBar from "@/components/HomeSearchBar";
+import {
+  categoryEmojiMap as emojiMap,
+  formatCategoryLabel,
+} from "@/lib/categoryEmojiMap";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -16,16 +20,6 @@ export const metadata: Metadata = {
 
 export default async function CategoryLandingPage() {
   const categories = await getCategories();
-  const emojiMap: Record<string, string> = {
-    Rørlegger: "🔧",
-    Elektriker: "⚡",
-    Snekker: "🪚",
-    Tømrer: "🪚",
-    Murer: "🧱",
-    Flislegger: "🧩",
-    Maler: "🎨",
-    Reparatør: "🛠️",
-  };
 
   return (
     <main className="container">
@@ -49,7 +43,7 @@ export default async function CategoryLandingPage() {
                 className="category-pill"
                 href={`/category/${category.slug}`}
               >
-                {emojiMap[category.name] ? `${emojiMap[category.name]} ${category.name}` : category.name}
+                {formatCategoryLabel(category.name, emojiMap)}
               </Link>
             ))}
             {categories.length === 0 ? (

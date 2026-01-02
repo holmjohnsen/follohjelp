@@ -1,22 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { formatCategoryLabel } from "@/lib/categoryEmojiMap";
 
 type Category = {
   name: string;
   slug: string;
-};
-
-const emojiMap: Record<string, string> = {
-  Rørlegger: "🔧",
-  Elektriker: "⚡",
-  Snekker: "🪚",
-  Tømrer: "🪚",
-  Murer: "🧱",
-  Flislegger: "🧱",
-  Maler: "🎨",
-  Taktekker: "🏠",
-  Rengjøring: "🧽",
 };
 
 export default function HomeCategories() {
@@ -41,10 +31,9 @@ export default function HomeCategories() {
   const decorated = useMemo(
     () =>
       categories.map((category) => {
-        const emoji = emojiMap[category.name] ?? "";
         return {
           ...category,
-          label: emoji ? `${emoji} ${category.name}` : category.name,
+          label: formatCategoryLabel(category.name),
         };
       }),
     [categories],
@@ -57,13 +46,13 @@ export default function HomeCategories() {
   return (
     <div className="category-grid">
       {decorated.map((category) => (
-        <a
+        <Link
           key={category.slug}
           className="category-pill"
           href={`/category/${category.slug}`}
         >
           {category.label}
-        </a>
+        </Link>
       ))}
     </div>
   );

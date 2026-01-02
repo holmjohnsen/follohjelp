@@ -678,6 +678,22 @@ a{ color: inherit; text-decoration: none; }
   text-decoration-thickness: 2px;
 }
 
+/* Pill links should never be underlined, even inside fh-card */
+a.category-pill,
+.fh-card a.category-pill,
+a.fh-pill,
+.fh-card a.fh-pill,
+a.category-pill:visited,
+.fh-card a.category-pill:visited,
+a.fh-pill:visited,
+.fh-card a.fh-pill:visited,
+a.category-pill:hover,
+.fh-card a.category-pill:hover,
+a.fh-pill:hover,
+.fh-card a.fh-pill:hover {
+  text-decoration: none;
+}
+
 .fh-card{
   background: var(--fh-card);
   border: 1px solid var(--fh-border);
