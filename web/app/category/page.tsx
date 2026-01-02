@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { getCategories } from "@/lib/airtable";
 import Link from "next/link";
+import HomeSearchBar from "@/components/HomeSearchBar";
 
 export default async function CategoryLandingPage() {
   const categories = await getCategories();
@@ -9,6 +10,7 @@ export default async function CategoryLandingPage() {
   return (
     <main className="container">
       <section className="hero">
+        <HomeSearchBar placeholder="Søk etter firmanavn, sted eller fagområde" />
         <h1>Kategorier</h1>
         <p className="subtitle">
           Utforsk fagområder og finn lokale håndverkere i Follo.
