@@ -16,6 +16,16 @@ export const metadata: Metadata = {
 
 export default async function CategoryLandingPage() {
   const categories = await getCategories();
+  const emojiMap: Record<string, string> = {
+    Rørlegger: "🔧",
+    Elektriker: "⚡",
+    Snekker: "🪚",
+    Tømrer: "🪚",
+    Murer: "🧱",
+    Flislegger: "🧩",
+    Maler: "🎨",
+    Reparatør: "🛠️",
+  };
 
   return (
     <main className="container">
@@ -39,7 +49,7 @@ export default async function CategoryLandingPage() {
                 className="category-pill"
                 href={`/category/${category.slug}`}
               >
-                {category.name}
+                {emojiMap[category.name] ? `${emojiMap[category.name]} ${category.name}` : category.name}
               </Link>
             ))}
             {categories.length === 0 ? (
