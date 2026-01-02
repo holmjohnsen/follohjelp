@@ -1,5 +1,6 @@
 import CookieBanner from "@/components/CookieBanner";
 import HomeSearchBar from "@/components/HomeSearchBar";
+import HomeCategories from "@/components/HomeCategories";
 
 export default function Home() {
   return (
@@ -28,21 +29,9 @@ export default function Home() {
         </section>
 
         <section className="categories">
-          <h2>Kategorier</h2>
-          <div className="category-grid">
-            <a className="category-pill" href="/category">
-              Rørlegger
-            </a>
-            <a className="category-pill" href="/category">
-              Elektriker
-            </a>
-            <a className="category-pill" href="/category">
-              Snekker
-            </a>
-            <a className="category-pill" href="/category">
-              Murer
-            </a>
-          </div>
+          <h2>Populære fagområder</h2>
+          <HomeCategories />
+          <p className="results-count">Du kan også søke på sted.</p>
         </section>
 
         <section className="lead-section">

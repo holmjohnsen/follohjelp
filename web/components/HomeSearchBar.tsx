@@ -78,7 +78,7 @@ export default function HomeSearchBar({ initialQuery = "", placeholder }: Props)
     <form className="search-bar" style={{ marginTop: "16px" }} onSubmit={handleSubmit}>
       <input
         type="text"
-        placeholder={placeholder ?? "Søk etter håndverker eller fagfelt"}
+        placeholder={placeholder ?? "Søk etter rørlegger, snekker eller firmanavn"}
         aria-label="Søk etter håndverker eller fagfelt"
         value={query}
         onChange={(event) => setQuery(event.target.value)}

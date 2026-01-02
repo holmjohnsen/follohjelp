@@ -4,7 +4,7 @@ export default function SiteFooter() {
       <div className="container">
         <div className="footer-content">
           <div className="footer-text">
-            © 2025 Follohjelp.no – Lokale tjenester i Follo
+            © 2026 Follohjelp.no – Lokale tjenester i Follo
           </div>
           <div className="footer-locations">
             Drøbak • Ås • Ski • Vestby • Nesodden |{" "}
