@@ -131,7 +131,7 @@ export default function ProviderSignupForm() {
       <div className="lead-card">
         <div className="lead-header">
           <h2>List din bedrift</h2>
-          <p>Send inn bedriften din for gratis synlighet i Follo.</p>
+          <p>Send inn bedriften din for synlighet i Follo.</p>
         </div>
         <form className="lead-form" onSubmit={handleSubmit} noValidate>
           <div className="lead-field">
@@ -239,26 +239,6 @@ export default function ProviderSignupForm() {
           <div className="lead-field">
             <h3>Kontakt</h3>
             <p className="results-count">Minst én kontaktmetode må fylles ut.</p>
-          </div>
-
-          <div className="lead-grid">
-            <div className="lead-field">
-              <label htmlFor="url">Nettside (valgfritt)</label>
-              <input
-                id="url"
-                type="text"
-                placeholder="https://firma.no"
-                value={form.url}
-                onChange={(e) => handleChange("url", e.target.value)}
-                disabled={isDisabled}
-              />
-            </div>
-          </div>
-
-          <div className="lead-field">
-            <h3>Kontakt</h3>
-            <p className="results-count">Minst én kontaktmetode må fylles ut.</p>
-
           </div>
 
           <div className="lead-grid">

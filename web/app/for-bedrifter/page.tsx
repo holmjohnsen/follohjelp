@@ -89,6 +89,7 @@ export default function ForBedrifterPage() {
               <li key={item}>{item}</li>
             ))}
           </ol>
+
         </div>
       </section>
 
@@ -116,19 +117,6 @@ export default function ForBedrifterPage() {
             Du kan når som helst be oss endre eller fjerne oppføringen din.
           </p>
         </div>
-      </section>
-
-      <section className="fh-section">
-        <h2>Legg inn bedriften</h2>
-        <p className="fh-lead">
-          Skjemaet under går rett til oss. Vi kontakter deg før oppføringen
-          publiseres.
-        </p>
-        <ProviderSignupForm />
-        <p className="fh-note">
-          Vi deler ikke informasjonen din videre og tar kontakt før noe
-          publiseres.
-        </p>
       </section>
 
       <section className="fh-section">
