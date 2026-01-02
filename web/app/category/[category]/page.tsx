@@ -20,11 +20,24 @@ export async function generateMetadata({
     };
   }
 
+  const pluralMap: Record<string, string> = {
+    Rørlegger: "rørleggere",
+    Elektriker: "elektrikere",
+    Snekker: "snekkere",
+    Tømrer: "tømrere",
+    Murer: "murere",
+    Maler: "malere",
+    Flislegger: "flisleggere",
+    Taktekker: "taktekkere",
+    Renholder: "renholdere",
+    Rengjøring: "renholdere",
+  };
   const nameLower = match.name.toLowerCase();
+  const pluralLower = pluralMap[match.name] ?? nameLower;
 
   return {
-    title: `${match.name} i Follo – lokale ${nameLower} | Follohjelp`,
-    description: `Finn lokale ${nameLower} i Follo. Se bedrifter i Drøbak, Ås, Ski, Vestby, Nesodden og omegn.`,
+    title: `${match.name} i Follo – lokale ${pluralLower} | Follohjelp`,
+    description: `Finn lokale ${pluralLower} i Follo. Se bedrifter i Drøbak, Ås, Ski, Vestby, Nesodden og omegn.`,
     alternates: {
       canonical: `/category/${match.slug}`,
     },
