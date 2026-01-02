@@ -89,6 +89,7 @@ export default function ForBedrifterPage() {
               <li key={item}>{item}</li>
             ))}
           </ol>
+
         </div>
       </section>
 

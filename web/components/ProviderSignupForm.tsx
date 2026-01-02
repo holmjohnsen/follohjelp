@@ -131,7 +131,7 @@ export default function ProviderSignupForm() {
       <div className="lead-card">
         <div className="lead-header">
           <h2>List din bedrift</h2>
-          <p>Send inn bedriften din for gratis synlighet i Follo.</p>
+          <p>Send inn bedriften din for synlighet i Follo.</p>
         </div>
         <form className="lead-form" onSubmit={handleSubmit} noValidate>
           <div className="lead-field">
