@@ -116,15 +116,18 @@ export default async function SearchPage({
     <main className="container">
       <section className="hero">
         <h1>Søk</h1>
-        <HomeSearchBar
-          initialQuery={query}
-          placeholder="Søk etter firmanavn, sted eller fagområde"
-        />
         <p className="results-count">
           {query.length === 0
             ? "Skriv inn et søk for å se resultater."
             : `${limitedResults.length} treff for '${query}'`}
         </p>
+      </section>
+
+      <section className="fh-section">
+        <HomeSearchBar
+          initialQuery={query}
+          placeholder="Søk etter firmanavn, sted eller fagområde"
+        />
       </section>
 
       <section className="fh-section">

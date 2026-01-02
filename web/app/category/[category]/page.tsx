@@ -41,11 +41,14 @@ export default async function CategoryPage({
   return (
     <main className="container">
       <section className="hero">
-        <HomeSearchBar placeholder="Søk etter firmanavn, sted eller fagområde" />
         <h1>{matchedCategory.name} i Follo</h1>
         <p className="results-count">
           {providers.length} treff i kategorien {matchedCategory.name}.
         </p>
+      </section>
+
+      <section className="fh-section">
+        <HomeSearchBar placeholder="Søk etter firmanavn, sted eller fagområde" />
       </section>
 
       <section className="fh-section">

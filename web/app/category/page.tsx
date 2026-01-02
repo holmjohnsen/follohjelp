@@ -10,11 +10,14 @@ export default async function CategoryLandingPage() {
   return (
     <main className="container">
       <section className="hero">
-        <HomeSearchBar placeholder="Søk etter firmanavn, sted eller fagområde" />
         <h1>Kategorier</h1>
         <p className="subtitle">
           Utforsk fagområder og finn lokale håndverkere i Follo.
         </p>
+      </section>
+
+      <section className="fh-section">
+        <HomeSearchBar placeholder="Søk etter firmanavn, sted eller fagområde" />
       </section>
 
       <section className="fh-section">
