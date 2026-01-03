@@ -12,10 +12,13 @@ export async function generateMetadata({
   params: Promise<{ category: string }>;
 }) {
   const { category } = await params;
-  const categories = await getCategories();
-  const match = categories.find((cat) => cat.slug === category);
+  const [{ category: matchedCategory, providers }, categories] =
+    await Promise.all([
+      getProvidersByCategorySlug(category),
+      getCategories(),
+    ]);
 
-  if (!match) {
+  if (!matchedCategory) {
     return {
       title: "Kategori ikke funnet | Follohjelp",
       description: "Kategorien finnes ikke.",
@@ -34,14 +37,23 @@ export async function generateMetadata({
     Renholder: "renholdere",
     Rengjøring: "renholdere",
   };
-  const nameLower = match.name.toLowerCase();
-  const pluralLower = pluralMap[match.name] ?? nameLower;
+  const nameLower = matchedCategory.name.toLowerCase();
+  const pluralLower = pluralMap[matchedCategory.name] ?? nameLower;
+
+  const robots =
+    providers.length === 0
+      ? {
+          index: false,
+          follow: true,
+        }
+      : undefined;
 
   return {
-    title: `${match.name} i Follo – lokale ${pluralLower} | Follohjelp`,
+    title: `${matchedCategory.name} i Follo – lokale ${pluralLower} | Follohjelp`,
     description: `Finn lokale ${pluralLower} i Follo. Se bedrifter i Drøbak, Ås, Ski, Vestby, Nesodden og omegn.`,
+    robots,
     alternates: {
-      canonical: `/category/${match.slug}`,
+      canonical: `/category/${matchedCategory.slug}`,
     },
   };
 }
