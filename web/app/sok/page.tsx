@@ -8,6 +8,14 @@ import {
 } from "@/lib/airtable";
 import { normalizeText, slugify } from "@/lib/search";
 import HomeSearchBar from "@/components/HomeSearchBar";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
 
 type SearchParams = {
   q?: string;
