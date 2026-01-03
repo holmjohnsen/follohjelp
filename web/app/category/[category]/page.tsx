@@ -2,7 +2,9 @@ export const dynamic = "force-dynamic";
 
 import { getCategories, getProvidersByCategorySlug } from "@/lib/airtable";
 import HomeSearchBar from "@/components/HomeSearchBar";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { formatCategoryLabel } from "@/lib/categoryEmojiMap";
 
 export async function generateMetadata({
   params,
@@ -50,12 +52,19 @@ export default async function CategoryPage({
   params: Promise<{ category: string }>;
 }) {
   const { category } = await params;
-  const { category: matchedCategory, providers } =
-    await getProvidersByCategorySlug(category);
+  const [{ category: matchedCategory, providers }, categories] =
+    await Promise.all([
+      getProvidersByCategorySlug(category),
+      getCategories(),
+    ]);
 
   if (!matchedCategory) {
     return notFound();
   }
+
+  const otherCategories = categories
+    .filter((cat) => cat.slug !== category)
+    .slice(0, 12);
 
   return (
     <main className="container">
@@ -108,6 +117,23 @@ export default async function CategoryPage({
           ) : null}
         </div>
       </section>
+
+      {otherCategories.length ? (
+        <section className="fh-section">
+          <h2 className="fh-h2">Utforsk flere fagområder</h2>
+          <div className="category-grid">
+            {otherCategories.map((cat) => (
+              <Link
+                key={cat.id}
+                className="category-pill"
+                href={`/category/${cat.slug}`}
+              >
+                {formatCategoryLabel(cat.name)}
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="fh-section">
         <p className="results-count">
