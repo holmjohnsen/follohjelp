@@ -6,6 +6,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { formatCategoryLabel } from "@/lib/categoryEmojiMap";
 
+const baseUrl = "https://follohjelp.no";
+
 export async function generateMetadata({
   params,
 }: {
@@ -94,7 +96,11 @@ export default async function CategoryPage({
       <section className="fh-section">
         <div className="suppliers-grid">
           {providers.map((provider) => (
-            <div className="supplier-card" key={provider.id}>
+            <div
+              className="supplier-card"
+              key={provider.id}
+              id={`provider-${provider.id}`}
+            >
               <div className="supplier-content">
                 <div className="supplier-name">{provider.name}</div>
                 <div className="supplier-category">
@@ -129,6 +135,41 @@ export default async function CategoryPage({
           ) : null}
         </div>
       </section>
+
+      {providers.length > 0 ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(
+              {
+                "@context": "https://schema.org",
+                "@type": "ItemList",
+                itemListElement: providers.map((provider, index) => ({
+                  "@type": "ListItem",
+                  position: index + 1,
+                  item: {
+                    "@type": "LocalBusiness",
+                    name: provider.name,
+                    ...(provider.description
+                      ? { description: provider.description }
+                      : {}),
+                    ...(provider.phone ? { telephone: provider.phone } : {}),
+                    areaServed: "Follo",
+                    address: {
+                      "@type": "PostalAddress",
+                      addressRegion: "Akershus",
+                      addressCountry: "NO",
+                    },
+                    url: `${baseUrl}/category/${matchedCategory.slug}#provider-${provider.id}`,
+                  },
+                })),
+              },
+              null,
+              2,
+            ),
+          }}
+        />
+      ) : null}
 
       {otherCategories.length ? (
         <section className="fh-section">

@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   },
 };
 
+const baseUrl = "https://follohjelp.no";
+
 type SearchParams = {
   q?: string;
 };
@@ -160,7 +162,11 @@ export default async function SearchPage({
         ) : (
           <div className="suppliers-grid">
             {limitedResults.map(({ provider, categoryNames, locationName }) => (
-              <div className="supplier-card" key={provider.id}>
+              <div
+                className="supplier-card"
+                key={provider.id}
+                id={`provider-${provider.id}`}
+              >
                 <div className="supplier-content">
                   <div className="supplier-name">{provider.name}</div>
                   <div className="supplier-category">
@@ -184,6 +190,43 @@ export default async function SearchPage({
           </div>
         )}
       </section>
+
+      {limitedResults.length > 0 ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(
+              {
+                "@context": "https://schema.org",
+                "@type": "ItemList",
+                itemListElement: limitedResults.map(
+                  ({ provider }, index) => ({
+                    "@type": "ListItem",
+                    position: index + 1,
+                    item: {
+                      "@type": "LocalBusiness",
+                      name: provider.name,
+                      ...(provider.description
+                        ? { description: provider.description }
+                        : {}),
+                      ...(provider.phone ? { telephone: provider.phone } : {}),
+                      areaServed: "Follo",
+                      address: {
+                        "@type": "PostalAddress",
+                        addressRegion: "Akershus",
+                        addressCountry: "NO",
+                      },
+                      url: `${baseUrl}/sok${query ? `?q=${encodeURIComponent(query)}` : ""}#provider-${provider.id}`,
+                    },
+                  }),
+                ),
+              },
+              null,
+              2,
+            ),
+          }}
+        />
+      ) : null}
     </main>
   );
 }
