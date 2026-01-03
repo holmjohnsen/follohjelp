@@ -2,9 +2,10 @@ export const dynamic = "force-dynamic";
 
 import { getCategories, getProvidersByCategorySlug } from "@/lib/airtable";
 import HomeSearchBar from "@/components/HomeSearchBar";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { formatCategoryLabel } from "@/lib/categoryEmojiMap";
+import CategoryPills from "@/components/CategoryPills";
+import { ProviderCardTrack, TrackedContactLink } from "@/components/ProviderCardTrack";
+import EmptyResultTracker from "@/components/EmptyResultTracker";
 
 const baseUrl = "https://follohjelp.no";
 
@@ -90,38 +91,56 @@ export default async function CategoryPage({
       </section>
 
       <section className="fh-section">
-        <HomeSearchBar placeholder="Søk etter firmanavn, sted eller fagområde" />
+        <HomeSearchBar
+          placeholder="Søk etter firmanavn, sted eller fagområde"
+          source="category"
+        />
       </section>
 
       <section className="fh-section">
         <div className="suppliers-grid">
           {providers.map((provider) => (
-            <div
-              className="supplier-card"
+            <ProviderCardTrack
               key={provider.id}
-              id={`provider-${provider.id}`}
+              providerId={provider.id}
+              categorySlug={matchedCategory.slug}
+              locationSlugOrName={provider.location}
+              pageType="category"
             >
-              <div className="supplier-content">
-                <div className="supplier-name">{provider.name}</div>
-                <div className="supplier-category">
-                  {(provider.category && provider.category.length > 0
-                    ? provider.category.join(", ")
-                    : "")}
-              </div>
-              <p className="supplier-description">
-                {provider.description || "Ingen beskrivelse tilgjengelig."}
-              </p>
-              <div className="supplier-meta">
-                  {provider.location &&
-                  !/^rec[A-Za-z0-9]{10,}$/.test(provider.location) ? (
-                    <div className="supplier-location">{provider.location}</div>
-                  ) : null}
-                  {provider.phone ? (
-                    <div className="supplier-contact">{provider.phone}</div>
-                  ) : null}
+              <div
+                className="supplier-card"
+                id={`provider-${provider.id}`}
+              >
+                <div className="supplier-content">
+                  <div className="supplier-name">{provider.name}</div>
+                  <div className="supplier-category">
+                    {(provider.category && provider.category.length > 0
+                      ? provider.category.join(", ")
+                      : "")}
+                  </div>
+                  <p className="supplier-description">
+                    {provider.description || "Ingen beskrivelse tilgjengelig."}
+                  </p>
+                  <div className="supplier-meta">
+                    {provider.location &&
+                    !/^rec[A-Za-z0-9]{10,}$/.test(provider.location) ? (
+                      <div className="supplier-location">{provider.location}</div>
+                    ) : null}
+                    {provider.phone ? (
+                      <TrackedContactLink
+                        className="supplier-contact"
+                        href={`tel:${provider.phone}`}
+                        providerId={provider.id}
+                        contactType="phone"
+                        categorySlug={matchedCategory.slug}
+                      >
+                        {provider.phone}
+                      </TrackedContactLink>
+                    ) : null}
+                  </div>
                 </div>
               </div>
-            </div>
+            </ProviderCardTrack>
           ))}
           {providers.length === 0 ? (
             <div className="supplier-card">
@@ -135,6 +154,10 @@ export default async function CategoryPage({
           ) : null}
         </div>
       </section>
+
+      {providers.length === 0 ? (
+        <EmptyResultTracker context="category" category={matchedCategory.slug} />
+      ) : null}
 
       {providers.length > 0 ? (
         <script
@@ -174,17 +197,12 @@ export default async function CategoryPage({
       {otherCategories.length ? (
         <section className="fh-section">
           <h2 className="fh-h2">Utforsk flere fagområder</h2>
-          <div className="category-grid">
-            {otherCategories.map((cat) => (
-              <Link
-                key={cat.id}
-                className="category-pill"
-                href={`/category/${cat.slug}`}
-              >
-                {formatCategoryLabel(cat.name)}
-              </Link>
-            ))}
-          </div>
+          <CategoryPills
+            items={otherCategories}
+            source="category_page"
+            activeSlug={matchedCategory.slug}
+            limit={12}
+          />
         </section>
       ) : null}
 

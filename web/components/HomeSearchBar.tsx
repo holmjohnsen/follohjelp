@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { normalizeText, slugify } from "@/lib/search";
+import { GA_EVENT_NAMES, track } from "@/lib/ga";
 
 type Category = {
   name: string;
@@ -12,9 +13,14 @@ type Category = {
 type Props = {
   initialQuery?: string;
   placeholder?: string;
+  source?: "home" | "search" | "category";
 };
 
-export default function HomeSearchBar({ initialQuery = "", placeholder }: Props) {
+export default function HomeSearchBar({
+  initialQuery = "",
+  placeholder,
+  source = "home",
+}: Props) {
   const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
   const [error, setError] = useState<string | null>(null);
@@ -55,6 +61,11 @@ export default function HomeSearchBar({ initialQuery = "", placeholder }: Props)
       setError("Skriv inn et søk.");
       return;
     }
+
+    track(GA_EVENT_NAMES.searchUsed, {
+      search_term: trimmed,
+      source,
+    });
 
     setError(null);
     const slugQuery = slugify(trimmed);

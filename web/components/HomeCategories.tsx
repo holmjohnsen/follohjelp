@@ -1,12 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { formatCategoryLabel } from "@/lib/categoryEmojiMap";
+import CategoryPills from "@/components/CategoryPills";
 
 type Category = {
   name: string;
   slug: string;
+  id?: string;
 };
 
 export default function HomeCategories() {
@@ -31,10 +31,7 @@ export default function HomeCategories() {
   const decorated = useMemo(
     () =>
       categories.map((category) => {
-        return {
-          ...category,
-          label: formatCategoryLabel(category.name),
-        };
+        return category;
       }),
     [categories],
   );
@@ -44,16 +41,10 @@ export default function HomeCategories() {
   }
 
   return (
-    <div className="category-grid">
-      {decorated.map((category) => (
-        <Link
-          key={category.slug}
-          className="category-pill"
-          href={`/category/${category.slug}`}
-        >
-          {category.label}
-        </Link>
-      ))}
-    </div>
+    <CategoryPills
+      items={decorated}
+      source="home"
+      limit={decorated.length || 12}
+    />
   );
 }

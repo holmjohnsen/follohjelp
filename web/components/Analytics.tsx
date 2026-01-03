@@ -1,7 +1,7 @@
 "use client";
 
 import Script from "next/script";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 const GA_MEASUREMENT_ID = "G-T02QR9E3T9";
@@ -15,13 +15,18 @@ declare global {
 
 export default function Analytics() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (!window.gtag) return;
-    window.gtag("config", GA_MEASUREMENT_ID, {
-      page_path: pathname,
+    if (typeof window === "undefined" || !window.gtag) return;
+
+    const qs = searchParams.toString();
+    const page_path = qs ? `${pathname}?${qs}` : pathname;
+
+    window.gtag("event", "page_view", {
+      page_path,
     });
-  }, [pathname]);
+  }, [pathname, searchParams]);
 
   return (
     <>
@@ -38,7 +43,7 @@ export default function Analytics() {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${GA_MEASUREMENT_ID}');
+            gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: false });
           `,
         }}
       />

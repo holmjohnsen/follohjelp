@@ -9,6 +9,8 @@ import {
 import { normalizeText, slugify } from "@/lib/search";
 import HomeSearchBar from "@/components/HomeSearchBar";
 import type { Metadata } from "next";
+import { ProviderCardTrack, TrackedContactLink } from "@/components/ProviderCardTrack";
+import EmptyResultTracker from "@/components/EmptyResultTracker";
 
 export const metadata: Metadata = {
   robots: {
@@ -137,6 +139,7 @@ export default async function SearchPage({
         <HomeSearchBar
           initialQuery={query}
           placeholder="Søk etter firmanavn, sted eller fagområde"
+          source="search"
         />
       </section>
 
@@ -162,34 +165,51 @@ export default async function SearchPage({
         ) : (
           <div className="suppliers-grid">
             {limitedResults.map(({ provider, categoryNames, locationName }) => (
-              <div
-                className="supplier-card"
+              <ProviderCardTrack
                 key={provider.id}
-                id={`provider-${provider.id}`}
+                providerId={provider.id}
+                locationSlugOrName={locationName}
+                pageType="search"
               >
-                <div className="supplier-content">
-                  <div className="supplier-name">{provider.name}</div>
-                  <div className="supplier-category">
-                    {categoryNames.length > 0 ? categoryNames.join(", ") : ""}
-                  </div>
-                  <p className="supplier-description">
-                    {provider.description || "Ingen beskrivelse tilgjengelig."}
-                  </p>
-                  <div className="supplier-meta">
-                    {locationName &&
-                    !/^rec[A-Za-z0-9]{10,}$/.test(locationName) ? (
-                      <div className="supplier-location">{locationName}</div>
-                    ) : null}
-                    {provider.phone ? (
-                      <div className="supplier-contact">{provider.phone}</div>
-                    ) : null}
+                <div
+                  className="supplier-card"
+                  id={`provider-${provider.id}`}
+                >
+                  <div className="supplier-content">
+                    <div className="supplier-name">{provider.name}</div>
+                    <div className="supplier-category">
+                      {categoryNames.length > 0 ? categoryNames.join(", ") : ""}
+                    </div>
+                    <p className="supplier-description">
+                      {provider.description || "Ingen beskrivelse tilgjengelig."}
+                    </p>
+                    <div className="supplier-meta">
+                      {locationName &&
+                      !/^rec[A-Za-z0-9]{10,}$/.test(locationName) ? (
+                        <div className="supplier-location">{locationName}</div>
+                      ) : null}
+                      {provider.phone ? (
+                        <TrackedContactLink
+                          className="supplier-contact"
+                          href={`tel:${provider.phone}`}
+                          providerId={provider.id}
+                          contactType="phone"
+                        >
+                          {provider.phone}
+                        </TrackedContactLink>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
-              </div>
+              </ProviderCardTrack>
             ))}
           </div>
         )}
       </section>
+
+      {query.length > 0 && limitedResults.length === 0 ? (
+        <EmptyResultTracker context="search" searchTerm={query} />
+      ) : null}
 
       {limitedResults.length > 0 ? (
         <script

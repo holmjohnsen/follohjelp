@@ -1,12 +1,8 @@
 export const dynamic = "force-dynamic";
 
 import { getCategories } from "@/lib/airtable";
-import Link from "next/link";
 import HomeSearchBar from "@/components/HomeSearchBar";
-import {
-  categoryEmojiMap as emojiMap,
-  formatCategoryLabel,
-} from "@/lib/categoryEmojiMap";
+import CategoryPills from "@/components/CategoryPills";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -31,25 +27,22 @@ export default async function CategoryLandingPage() {
       </section>
 
       <section className="fh-section">
-        <HomeSearchBar placeholder="Søk etter firmanavn, sted eller fagområde" />
+        <HomeSearchBar
+          placeholder="Søk etter firmanavn, sted eller fagområde"
+          source="category"
+        />
       </section>
 
       <section className="fh-section">
         <div className="fh-card">
-          <div className="category-grid">
-            {categories.map((category) => (
-              <Link
-                key={category.id}
-                className="category-pill"
-                href={`/category/${category.slug}`}
-              >
-                {formatCategoryLabel(category.name, emojiMap)}
-              </Link>
-            ))}
-            {categories.length === 0 ? (
-              <p className="fh-lead">Ingen kategorier tilgjengelig ennå.</p>
-            ) : null}
-          </div>
+          <CategoryPills
+            items={categories}
+            source="category_landing"
+            limit={categories.length || 12}
+          />
+          {categories.length === 0 ? (
+            <p className="fh-lead">Ingen kategorier tilgjengelig ennå.</p>
+          ) : null}
         </div>
       </section>
     </main>
