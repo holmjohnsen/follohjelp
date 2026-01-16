@@ -10,6 +10,7 @@ export type Provider = {
   location: string;
   description: string;
   phone?: string;
+  url?: string;
 };
 
 const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
@@ -214,6 +215,7 @@ async function fetchProviders(filters: ProviderFilters, includeEmail = false) {
         location,
         description,
         phone: fields["phone"] ? String(fields["phone"]).trim() : undefined,
+        url: fields["url"] ? String(fields["url"]).trim() : undefined,
         email: includeEmail && fields["email"] ? String(fields["email"]).trim() : undefined,
       });
     });
@@ -594,6 +596,7 @@ async function fetchProvidersByFormula(
         location,
         description,
         phone: fields["phone"] ? String(fields["phone"]).trim() : undefined,
+        url: fields["url"] ? String(fields["url"]).trim() : undefined,
         email: includeEmail && fields["email"] ? String(fields["email"]).trim() : undefined,
       });
     });
@@ -650,6 +653,7 @@ export async function getProvidersByCategorySlug(slug: string) {
         location: provider.location,
         description: provider.description,
         phone: provider.phone,
+        url: provider.url,
       } satisfies Provider;
     })
     .filter(Boolean) as Provider[];
