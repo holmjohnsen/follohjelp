@@ -468,6 +468,25 @@ footer {
   }
 }
 
+@media (max-width: 640px) {
+  main.container:has(.fh-h2) .fh-section {
+    padding: 8px 0;
+  }
+
+  main.container:has(.fh-h2) .search-bar {
+    margin-bottom: 28px;
+  }
+
+  main.container:has(.fh-h2) .suppliers-grid {
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+
+  main.container:has(.fh-h2) .fh-section:has(.fh-h2) {
+    padding-top: 6px;
+  }
+}
+
 .hidden {
   display: none !important;
 }
