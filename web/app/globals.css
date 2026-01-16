@@ -129,14 +129,21 @@ h1 {
   cursor: pointer;
   transition: 0.2s;
   font-size: 15px;
+}
+
+.search-btn:hover {
+  background: var(--brand-hover);
+}
+
+.search-bar .search-btn {
   position: absolute;
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
 }
 
-.search-btn:hover {
-  background: var(--brand-hover);
+.hero-cta {
+  margin-top: 12px;
 }
 
 /* Category Pills */
@@ -423,6 +430,15 @@ footer {
   .search-bar {
     border-radius: 16px;
     padding: 6px;
+  }
+
+  .search-bar input {
+    padding-right: 120px;
+    font-size: 16px;
+  }
+
+  .hero-cta .search-btn {
+    display: inline-flex;
   }
 
   .suppliers-grid {

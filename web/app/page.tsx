@@ -42,7 +42,7 @@ export default function Home() {
                 synlig for folk i nærområdet som faktisk leter etter hjelp.
               </p>
             </div>
-            <div className="lead-actions" style={{ marginTop: "12px" }}>
+            <div className="hero-cta">
               <a
                 className="search-btn"
                 href="/for-bedrifter"
