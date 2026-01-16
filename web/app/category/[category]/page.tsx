@@ -4,7 +4,8 @@ import { getCategories, getProvidersByCategorySlug } from "@/lib/airtable";
 import HomeSearchBar from "@/components/HomeSearchBar";
 import { notFound } from "next/navigation";
 import CategoryPills from "@/components/CategoryPills";
-import { ProviderCardTrack, TrackedContactLink } from "@/components/ProviderCardTrack";
+import { ProviderCardTrack } from "@/components/ProviderCardTrack";
+import ProviderCard from "@/components/ProviderCard";
 import EmptyResultTracker from "@/components/EmptyResultTracker";
 
 const baseUrl = "https://follohjelp.no";
@@ -107,39 +108,12 @@ export default async function CategoryPage({
               locationSlugOrName={provider.location}
               pageType="category"
             >
-              <div
-                className="supplier-card"
-                id={`provider-${provider.id}`}
-              >
-                <div className="supplier-content">
-                  <div className="supplier-name">{provider.name}</div>
-                  <div className="supplier-category">
-                    {(provider.category && provider.category.length > 0
-                      ? provider.category.join(", ")
-                      : "")}
-                  </div>
-                  <p className="supplier-description">
-                    {provider.description || "Ingen beskrivelse tilgjengelig."}
-                  </p>
-                  <div className="supplier-meta">
-                    {provider.location &&
-                    !/^rec[A-Za-z0-9]{10,}$/.test(provider.location) ? (
-                      <div className="supplier-location">{provider.location}</div>
-                    ) : null}
-                    {provider.phone ? (
-                      <TrackedContactLink
-                        className="supplier-contact"
-                        href={`tel:${provider.phone}`}
-                        providerId={provider.id}
-                        contactType="phone"
-                        categorySlug={matchedCategory.slug}
-                      >
-                        {provider.phone}
-                      </TrackedContactLink>
-                    ) : null}
-                  </div>
-                </div>
-              </div>
+              <ProviderCard
+                provider={provider}
+                categoryNames={provider.category}
+                locationName={provider.location}
+                categorySlug={matchedCategory.slug}
+              />
             </ProviderCardTrack>
           ))}
           {providers.length === 0 ? (

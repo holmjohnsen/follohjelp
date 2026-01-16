@@ -9,7 +9,8 @@ import {
 import { normalizeText, slugify } from "@/lib/search";
 import HomeSearchBar from "@/components/HomeSearchBar";
 import type { Metadata } from "next";
-import { ProviderCardTrack, TrackedContactLink } from "@/components/ProviderCardTrack";
+import { ProviderCardTrack } from "@/components/ProviderCardTrack";
+import ProviderCard from "@/components/ProviderCard";
 import EmptyResultTracker from "@/components/EmptyResultTracker";
 
 export const metadata: Metadata = {
@@ -171,36 +172,11 @@ export default async function SearchPage({
                 locationSlugOrName={locationName}
                 pageType="search"
               >
-                <div
-                  className="supplier-card"
-                  id={`provider-${provider.id}`}
-                >
-                  <div className="supplier-content">
-                    <div className="supplier-name">{provider.name}</div>
-                    <div className="supplier-category">
-                      {categoryNames.length > 0 ? categoryNames.join(", ") : ""}
-                    </div>
-                    <p className="supplier-description">
-                      {provider.description || "Ingen beskrivelse tilgjengelig."}
-                    </p>
-                    <div className="supplier-meta">
-                      {locationName &&
-                      !/^rec[A-Za-z0-9]{10,}$/.test(locationName) ? (
-                        <div className="supplier-location">{locationName}</div>
-                      ) : null}
-                      {provider.phone ? (
-                        <TrackedContactLink
-                          className="supplier-contact"
-                          href={`tel:${provider.phone}`}
-                          providerId={provider.id}
-                          contactType="phone"
-                        >
-                          {provider.phone}
-                        </TrackedContactLink>
-                      ) : null}
-                    </div>
-                  </div>
-                </div>
+                <ProviderCard
+                  provider={provider}
+                  categoryNames={categoryNames}
+                  locationName={locationName}
+                />
               </ProviderCardTrack>
             ))}
           </div>
