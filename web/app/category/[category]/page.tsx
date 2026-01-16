@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { getCategories, getProvidersByCategorySlug } from "@/lib/airtable";
+import { getCategories, getLocations, getProvidersByCategorySlug } from "@/lib/airtable";
 import HomeSearchBar from "@/components/HomeSearchBar";
 import { notFound } from "next/navigation";
 import CategoryPills from "@/components/CategoryPills";
@@ -68,16 +68,18 @@ export default async function CategoryPage({
   params: Promise<{ category: string }>;
 }) {
   const { category } = await params;
-  const [{ category: matchedCategory, providers }, categories] =
+  const [{ category: matchedCategory, providers }, categories, locations] =
     await Promise.all([
       getProvidersByCategorySlug(category),
       getCategories(),
+      getLocations(),
     ]);
 
   if (!matchedCategory) {
     return notFound();
   }
 
+  const locationNameById = new Map(locations.map((loc) => [loc.id, loc.name]));
   const otherCategories = categories
     .filter((cat) => cat.slug !== category)
     .slice(0, 12);
@@ -111,7 +113,9 @@ export default async function CategoryPage({
               <ProviderCard
                 provider={provider}
                 categoryNames={provider.category}
-                locationName={provider.location}
+                locationName={
+                  locationNameById.get(provider.location) ?? provider.location
+                }
                 categorySlug={matchedCategory.slug}
               />
             </ProviderCardTrack>
