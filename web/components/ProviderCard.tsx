@@ -38,7 +38,7 @@ export default function ProviderCard({
         <div className="supplier-meta">
           {displayLocation &&
           !/^rec[A-Za-z0-9]{10,}$/.test(displayLocation) ? (
-            <div className="supplier-location">📍 {displayLocation}</div>
+            <div className="supplier-contact">📍 {displayLocation}</div>
           ) : null}
           {provider.phone ? (
             <TrackedContactLink
