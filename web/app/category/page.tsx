@@ -27,10 +27,7 @@ export default async function CategoryLandingPage() {
       </section>
 
       <section className="fh-section">
-        <HomeSearchBar
-          placeholder="Søk etter firmanavn, sted eller fagområde"
-          source="category"
-        />
+        <HomeSearchBar source="category" />
       </section>
 
       <section className="fh-section">

@@ -16,6 +16,10 @@ type Props = {
   source?: "home" | "search" | "category";
 };
 
+const DESKTOP_PLACEHOLDER =
+  "Søk etter firmanavn, sted eller fagområde";
+const MOBILE_PLACEHOLDER = "Søk (navn, sted, fag)";
+
 export default function HomeSearchBar({
   initialQuery = "",
   placeholder,
@@ -106,10 +110,7 @@ export default function HomeSearchBar({
       <input
         type="text"
         placeholder={
-          placeholder ??
-          (isMobile
-            ? "Søk (navn, sted, fag)"
-            : "Søk etter firmanavn, sted eller fagområde")
+          isMobile ? MOBILE_PLACEHOLDER : (placeholder ?? DESKTOP_PLACEHOLDER)
         }
         aria-label="Søk etter håndverker eller fagfelt"
         value={query}

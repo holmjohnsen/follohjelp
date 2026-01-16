@@ -137,11 +137,7 @@ export default async function SearchPage({
       </section>
 
       <section className="fh-section">
-        <HomeSearchBar
-          initialQuery={query}
-          placeholder="Søk etter firmanavn, sted eller fagområde"
-          source="search"
-        />
+        <HomeSearchBar source="search" />
       </section>
 
       <section className="fh-section">
