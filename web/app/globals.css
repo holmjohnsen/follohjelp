@@ -469,24 +469,24 @@ footer {
 }
 
 @media (max-width: 640px) {
-  main.container:has(.suppliers-grid),
-  main.container:has(.category-grid) {
-    .fh-section {
+  main.container:has(.suppliers-grid) .fh-section,
+  main.container:has(.category-grid) .fh-section {
     padding: 8px 0;
   }
 
-    .search-bar {
+  main.container:has(.suppliers-grid) .search-bar,
+  main.container:has(.category-grid) .search-bar {
     margin-bottom: 28px;
   }
 
-    .suppliers-grid {
+  main.container:has(.suppliers-grid) .suppliers-grid {
     gap: 14px;
     margin-bottom: 36px;
   }
 
-    .fh-section:has(.fh-h2) {
+  main.container:has(.suppliers-grid) .fh-section:has(.fh-h2),
+  main.container:has(.category-grid) .fh-section:has(.fh-h2) {
     padding-top: 6px;
-  }
   }
 }
 
