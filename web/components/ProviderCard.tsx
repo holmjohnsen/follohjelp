@@ -38,7 +38,7 @@ export default function ProviderCard({
         <div className="supplier-meta">
           {displayLocation &&
           !/^rec[A-Za-z0-9]{10,}$/.test(displayLocation) ? (
-            <div className="supplier-location">{displayLocation}</div>
+            <div className="supplier-location">📍 {displayLocation}</div>
           ) : null}
           {provider.phone ? (
             <TrackedContactLink
@@ -48,7 +48,7 @@ export default function ProviderCard({
               contactType="phone"
               categorySlug={categorySlug}
             >
-              {provider.phone}
+              📞 {provider.phone}
             </TrackedContactLink>
           ) : null}
           {websiteUrl ? (
@@ -58,7 +58,7 @@ export default function ProviderCard({
               target="_blank"
               rel="noopener noreferrer"
             >
-              Nettside
+              🌐 Nettside
             </a>
           ) : null}
         </div>
