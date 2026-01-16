@@ -25,6 +25,7 @@ export default function HomeSearchBar({
   const [query, setQuery] = useState(initialQuery);
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setQuery(initialQuery);
@@ -42,6 +43,21 @@ export default function HomeSearchBar({
       }
     };
     void loadCategories();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(max-width: 640px)");
+    const updateIsMobile = () => setIsMobile(mediaQuery.matches);
+    updateIsMobile();
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", updateIsMobile);
+      return () => mediaQuery.removeEventListener("change", updateIsMobile);
+    }
+
+    mediaQuery.addListener(updateIsMobile);
+    return () => mediaQuery.removeListener(updateIsMobile);
   }, []);
 
   const normalizedCategories = useMemo(
@@ -89,7 +105,12 @@ export default function HomeSearchBar({
     <form className="search-bar" style={{ marginTop: "16px" }} onSubmit={handleSubmit}>
       <input
         type="text"
-        placeholder={placeholder ?? "Søk etter rørlegger, snekker eller firmanavn"}
+        placeholder={
+          placeholder ??
+          (isMobile
+            ? "Søk (navn, sted, fag)"
+            : "Søk etter firmanavn, sted eller fagområde")
+        }
         aria-label="Søk etter håndverker eller fagfelt"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
