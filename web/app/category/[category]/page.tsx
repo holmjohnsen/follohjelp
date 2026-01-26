@@ -189,12 +189,14 @@ export default async function CategoryPage({
           </p>
         </section>
       </main>
-      <div className="container microcopy">
-        <p>
-          Follohjelp er en lokal oversikt over håndverksbedrifter i Follo. Vi
-          formidler ikke anbud og videreselger ikke henvendelser – kun en ryddig
-          liste over lokale aktører du kan ta direkte kontakt med.
-        </p>
+      <div className="microcopy">
+        <div className="container">
+          <p>
+            Follohjelp er en lokal oversikt over håndverksbedrifter i Follo. Vi
+            formidler ikke anbud og videreselger ikke henvendelser – kun en ryddig
+            liste over lokale aktører du kan ta direkte kontakt med.
+          </p>
+        </div>
       </div>
     </>
   );
