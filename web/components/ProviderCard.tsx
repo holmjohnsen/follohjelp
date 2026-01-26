@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Provider } from "@/lib/airtable";
 import { TrackedContactLink } from "@/components/ProviderCardTrack";
 
@@ -24,9 +25,20 @@ export default function ProviderCard({
   const categories = categoryNames ?? provider.category ?? [];
   const displayLocation = locationName ?? provider.location;
   const websiteUrl = normalizeWebsiteUrl(provider.url);
+  const providerSlug = provider.slug?.trim();
 
   return (
-    <div className="supplier-card" id={`provider-${provider.id}`}>
+    <div
+      className={`supplier-card${providerSlug ? " supplier-card-linkable" : ""}`}
+      id={`provider-${provider.id}`}
+    >
+      {providerSlug ? (
+        <Link
+          className="supplier-card-link"
+          href={`/leverandor/${providerSlug}`}
+          aria-label={`Se ${provider.name}`}
+        />
+      ) : null}
       <div className="supplier-content">
         <div className="supplier-name">{provider.name}</div>
         <div className="supplier-category">

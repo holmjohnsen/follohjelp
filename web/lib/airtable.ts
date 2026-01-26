@@ -9,6 +9,7 @@ export type Provider = {
   category?: string[];
   location: string;
   description: string;
+  slug?: string;
   email?: string;
   phone?: string;
   url?: string;
@@ -211,6 +212,7 @@ async function fetchProviders(filters: ProviderFilters, includeEmail = false) {
         : String(locationField ?? "").trim();
       const description = String(fields["description"] ?? "").trim();
       const status = String(fields["status"] ?? "").trim();
+      const slugField = String(fields["slug"] ?? "").trim();
 
       if (status !== "active" || !name) {
         return;
@@ -223,6 +225,7 @@ async function fetchProviders(filters: ProviderFilters, includeEmail = false) {
         location,
         locationIds: locationIds.length ? locationIds : undefined,
         description,
+        slug: slugField || undefined,
         phone: fields["phone"] ? String(fields["phone"]).trim() : undefined,
         url: fields["url"] ? String(fields["url"]).trim() : undefined,
         email: includeEmail && fields["email"] ? String(fields["email"]).trim() : undefined,
@@ -635,6 +638,7 @@ async function fetchProvidersByFormula(
         : String(locationField ?? "").trim();
       const description = String(fields["description"] ?? "").trim();
       const status = String(fields["status"] ?? "").trim();
+      const slugField = String(fields["slug"] ?? "").trim();
 
       if (status !== "active" || !name) {
         return;
@@ -647,6 +651,7 @@ async function fetchProvidersByFormula(
         location,
         locationIds: locationIds.length ? locationIds : undefined,
         description,
+        slug: slugField || undefined,
         phone: fields["phone"] ? String(fields["phone"]).trim() : undefined,
         url: fields["url"] ? String(fields["url"]).trim() : undefined,
         email: includeEmail && fields["email"] ? String(fields["email"]).trim() : undefined,
@@ -704,6 +709,7 @@ export async function getProvidersByCategorySlug(slug: string) {
           .filter(Boolean) as string[],
         location: provider.location,
         description: provider.description,
+        slug: provider.slug,
         phone: provider.phone,
         url: provider.url,
       } satisfies Provider;
@@ -743,6 +749,7 @@ export async function getProviderBySlug(slug: string) {
     category: categoryNames.length ? categoryNames : undefined,
     location: locationId,
     description: provider.description,
+    slug: provider.slug,
     email: provider.email,
     phone: provider.phone,
     url: provider.url,
