@@ -44,7 +44,7 @@ export default async function CategoryLandingPage() {
           </div>
         </section>
       </main>
-      <div className="max-w-5xl mx-auto px-4 py-2 text-xs text-muted-foreground">
+      <div className="container microcopy">
         <p>
           Follohjelp er en lokal oversikt over håndverksbedrifter i Follo. Vi
           formidler ikke anbud og videreselger ikke henvendelser – kun en ryddig

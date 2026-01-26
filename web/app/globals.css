@@ -905,6 +905,19 @@ a.fh-pill:hover,
   font-size: 13px;
 }
 
+.microcopy {
+  padding: 8px 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+@media (max-width: 640px) {
+  .microcopy {
+    padding: 6px 0;
+    font-size: 11px;
+  }
+}
+
 /* Light theme overrides for legacy components */
 body {
   background: #f7f9fc;
