@@ -273,12 +273,14 @@ select:focus {
 .supplier-card-linkable .supplier-content {
   position: relative;
   z-index: 1;
+  pointer-events: none;
 }
 
 .supplier-card-linkable a,
 .supplier-card-linkable button {
   position: relative;
   z-index: 3;
+  pointer-events: auto;
 }
 
 .supplier-category {
