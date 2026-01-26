@@ -1,4 +1,4 @@
-import { getProviderBySlug } from "@/lib/airtable";
+import { getLocationNameById, getProviderBySlug } from "@/lib/airtable";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -44,7 +44,10 @@ export async function generateMetadata({
   }
 
   const categoryText = provider.category?.[0] ?? "Håndverker";
-  const locationText = provider.location?.trim() || "Follo";
+  const locationName = provider.location
+    ? await getLocationNameById(provider.location)
+    : null;
+  const locationText = locationName?.trim() || "Follo";
   const title = `${provider.name} – ${categoryText} i ${locationText} | Follohjelp`;
 
   return {
@@ -52,7 +55,7 @@ export async function generateMetadata({
     description: buildDescription({
       name: provider.name,
       category: provider.category,
-      location: provider.location,
+      location: locationName ?? undefined,
       description: provider.description,
     }),
   };
@@ -65,6 +68,10 @@ export default async function ProviderPage({ params }: PageProps) {
   if (!provider) {
     return notFound();
   }
+
+  const locationName = provider.location
+    ? await getLocationNameById(provider.location)
+    : null;
 
   return (
     <main className="container">
@@ -79,32 +86,35 @@ export default async function ProviderPage({ params }: PageProps) {
             ))}
           </div>
         ) : null}
+        {locationName || provider.phone || provider.url ? (
+          <div className="supplier-meta-row">
+            {locationName ? (
+              <span className="supplier-location">{locationName}</span>
+            ) : null}
+            {provider.phone ? (
+              <span className="supplier-contact">
+                <a href={`tel:${provider.phone}`}>{provider.phone}</a>
+              </span>
+            ) : null}
+            {provider.url ? (
+              <span className="supplier-contact">
+                <a
+                  href={provider.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Nettside
+                </a>
+              </span>
+            ) : null}
+          </div>
+        ) : null}
       </section>
 
       <section className="fh-section">
         <div className="fh-card">
           {provider.description ? (
             <p className="fh-lead">{provider.description}</p>
-          ) : null}
-          {provider.location ? (
-            <p className="results-count">Sted: {provider.location}</p>
-          ) : null}
-          {provider.phone ? (
-            <p className="results-count">
-              Telefon: <a href={`tel:${provider.phone}`}>{provider.phone}</a>
-            </p>
-          ) : null}
-          {provider.url ? (
-            <p className="results-count">
-              Nettside:{" "}
-              <a
-                href={provider.url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {provider.url}
-              </a>
-            </p>
           ) : null}
         </div>
       </section>

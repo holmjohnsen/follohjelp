@@ -71,6 +71,7 @@ function buildFilterFormula(
 
 type AirtableProvider = Provider & {
   email?: string;
+  locationIds?: string[];
 };
 
 type LeadInput = {
@@ -200,7 +201,13 @@ async function fetchProviders(filters: ProviderFilters, includeEmail = false) {
       const categoryList = Array.isArray(categoryField)
         ? categoryField.map((c) => String(c).trim()).filter(Boolean)
         : [];
-      const location = String(fields["location"] ?? "").trim();
+      const locationField = fields["location"];
+      const locationIds = Array.isArray(locationField)
+        ? locationField.map((loc) => String(loc).trim()).filter(Boolean)
+        : [];
+      const location = locationIds.length
+        ? locationIds[0]
+        : String(locationField ?? "").trim();
       const description = String(fields["description"] ?? "").trim();
       const status = String(fields["status"] ?? "").trim();
 
@@ -213,6 +220,7 @@ async function fetchProviders(filters: ProviderFilters, includeEmail = false) {
         name,
         category: categoryList,
         location,
+        locationIds: locationIds.length ? locationIds : undefined,
         description,
         phone: fields["phone"] ? String(fields["phone"]).trim() : undefined,
         url: fields["url"] ? String(fields["url"]).trim() : undefined,
@@ -391,6 +399,42 @@ export async function getLocations() {
 
   locations.sort((a, b) => a.name.localeCompare(b.name, "nb"));
   return locations;
+}
+
+export async function getLocationNameById(recordId: string) {
+  const trimmed = recordId.trim();
+  if (!trimmed) return null;
+
+  try {
+    const apiKey = ensureEnv(AIRTABLE_API_KEY, "AIRTABLE_API_KEY");
+    const baseId = ensureEnv(AIRTABLE_BASE_ID, "AIRTABLE_BASE_ID");
+    const table = ensureEnv(
+      AIRTABLE_LOCATIONS_TABLE ?? "Locations",
+      "AIRTABLE_LOCATIONS_TABLE",
+    );
+
+    const response = await fetch(
+      `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(
+        table,
+      )}/${trimmed}`,
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          Accept: "application/json",
+        },
+      },
+    );
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data: { fields?: Record<string, unknown> } = await response.json();
+    const name = String(data.fields?.["name"] ?? "").trim();
+    return name || null;
+  } catch {
+    return null;
+  }
 }
 
 export async function getProviderOptions() {
@@ -581,7 +625,13 @@ async function fetchProvidersByFormula(
       const categoryList = Array.isArray(categoryField)
         ? categoryField.map((c) => String(c).trim()).filter(Boolean)
         : [];
-      const location = String(fields["location"] ?? "").trim();
+      const locationField = fields["location"];
+      const locationIds = Array.isArray(locationField)
+        ? locationField.map((loc) => String(loc).trim()).filter(Boolean)
+        : [];
+      const location = locationIds.length
+        ? locationIds[0]
+        : String(locationField ?? "").trim();
       const description = String(fields["description"] ?? "").trim();
       const status = String(fields["status"] ?? "").trim();
 
@@ -594,6 +644,7 @@ async function fetchProvidersByFormula(
         name,
         category: categoryList,
         location,
+        locationIds: locationIds.length ? locationIds : undefined,
         description,
         phone: fields["phone"] ? String(fields["phone"]).trim() : undefined,
         url: fields["url"] ? String(fields["url"]).trim() : undefined,
@@ -683,12 +734,13 @@ export async function getProviderBySlug(slug: string) {
   const categoryNames = (provider.category ?? [])
     .map((idOrName) => idToName.get(idOrName) ?? idOrName)
     .filter(Boolean);
+  const locationId = provider.locationIds?.[0] ?? provider.location;
 
   return {
     id: provider.id,
     name: provider.name,
     category: categoryNames.length ? categoryNames : undefined,
-    location: provider.location,
+    location: locationId,
     description: provider.description,
     phone: provider.phone,
     url: provider.url,

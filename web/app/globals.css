@@ -289,6 +289,15 @@ select:focus {
   font-size: 14px;
 }
 
+.supplier-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 10px;
+}
+
 .supplier-location {
   color: var(--muted);
   display: flex;
