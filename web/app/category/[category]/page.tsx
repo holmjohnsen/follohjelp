@@ -85,108 +85,115 @@ export default async function CategoryPage({
     .slice(0, 12);
 
   return (
-    <main className="container">
-      <section className="hero">
-        <h1>{matchedCategory.name} i Follo</h1>
-        <p className="results-count">
-          {providers.length} treff i kategorien {matchedCategory.name}.
-        </p>
-      </section>
-
-      <section className="fh-section">
-        <HomeSearchBar source="category" />
-      </section>
-
-      <section className="fh-section">
-        <div className="suppliers-grid">
-          {providers.map((provider) => (
-            <ProviderCardTrack
-              key={provider.id}
-              providerId={provider.id}
-              categorySlug={matchedCategory.slug}
-              locationSlugOrName={provider.location}
-              pageType="category"
-            >
-              <ProviderCard
-                provider={provider}
-                categoryNames={provider.category}
-                locationName={
-                  locationNameById.get(provider.location) ?? provider.location
-                }
-                categorySlug={matchedCategory.slug}
-              />
-            </ProviderCardTrack>
-          ))}
-          {providers.length === 0 ? (
-            <div className="supplier-card">
-              <div className="supplier-content">
-                <div className="supplier-name">Ingen treff ennå</div>
-                <p className="supplier-description">
-                  Vi legger til flere håndverkere fortløpende.
-                </p>
-              </div>
-            </div>
-          ) : null}
-        </div>
-      </section>
-
-      {providers.length === 0 ? (
-        <EmptyResultTracker context="category" category={matchedCategory.slug} />
-      ) : null}
-
-      {providers.length > 0 ? (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(
-              {
-                "@context": "https://schema.org",
-                "@type": "ItemList",
-                itemListElement: providers.map((provider, index) => ({
-                  "@type": "ListItem",
-                  position: index + 1,
-                  item: {
-                    "@type": "LocalBusiness",
-                    name: provider.name,
-                    ...(provider.description
-                      ? { description: provider.description }
-                      : {}),
-                    ...(provider.phone ? { telephone: provider.phone } : {}),
-                    areaServed: "Follo",
-                    address: {
-                      "@type": "PostalAddress",
-                      addressRegion: "Akershus",
-                      addressCountry: "NO",
-                    },
-                    url: `${baseUrl}/category/${matchedCategory.slug}#provider-${provider.id}`,
-                  },
-                })),
-              },
-              null,
-              2,
-            ),
-          }}
-        />
-      ) : null}
-
-      {otherCategories.length ? (
-        <section className="fh-section">
-          <h2 className="fh-h2">Utforsk flere fagområder</h2>
-          <CategoryPills
-            items={otherCategories}
-            source="category_page"
-            activeSlug={matchedCategory.slug}
-            limit={12}
-          />
+    <>
+      <main className="container">
+        <section className="hero">
+          <h1>{matchedCategory.name} i Follo</h1>
+          <p className="results-count">
+            {providers.length} treff i kategorien {matchedCategory.name}.
+          </p>
         </section>
-      ) : null}
 
-      <section className="fh-section">
-        <p className="results-count">
-          Ser du etter flere håndverkere?{" "}
-          <a href="/category">Se alle fagområder</a>
-        </p>
-      </section>
-    </main>
+        <section className="fh-section">
+          <HomeSearchBar source="category" />
+        </section>
+
+        <section className="fh-section">
+          <div className="suppliers-grid">
+            {providers.map((provider) => (
+              <ProviderCardTrack
+                key={provider.id}
+                providerId={provider.id}
+                categorySlug={matchedCategory.slug}
+                locationSlugOrName={provider.location}
+                pageType="category"
+              >
+                <ProviderCard
+                  provider={provider}
+                  categoryNames={provider.category}
+                  locationName={
+                    locationNameById.get(provider.location) ?? provider.location
+                  }
+                  categorySlug={matchedCategory.slug}
+                />
+              </ProviderCardTrack>
+            ))}
+            {providers.length === 0 ? (
+              <div className="supplier-card">
+                <div className="supplier-content">
+                  <div className="supplier-name">Ingen treff ennå</div>
+                  <p className="supplier-description">
+                    Vi legger til flere håndverkere fortløpende.
+                  </p>
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </section>
+
+        {providers.length === 0 ? (
+          <EmptyResultTracker context="category" category={matchedCategory.slug} />
+        ) : null}
+
+        {providers.length > 0 ? (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(
+                {
+                  "@context": "https://schema.org",
+                  "@type": "ItemList",
+                  itemListElement: providers.map((provider, index) => ({
+                    "@type": "ListItem",
+                    position: index + 1,
+                    item: {
+                      "@type": "LocalBusiness",
+                      name: provider.name,
+                      ...(provider.description
+                        ? { description: provider.description }
+                        : {}),
+                      ...(provider.phone ? { telephone: provider.phone } : {}),
+                      areaServed: "Follo",
+                      address: {
+                        "@type": "PostalAddress",
+                        addressRegion: "Akershus",
+                        addressCountry: "NO",
+                      },
+                      url: `${baseUrl}/category/${matchedCategory.slug}#provider-${provider.id}`,
+                    },
+                  })),
+                },
+                null,
+                2,
+              ),
+            }}
+          />
+        ) : null}
+
+        {otherCategories.length ? (
+          <section className="fh-section">
+            <h2 className="fh-h2">Utforsk flere fagområder</h2>
+            <CategoryPills
+              items={otherCategories}
+              source="category_page"
+              activeSlug={matchedCategory.slug}
+              limit={12}
+            />
+          </section>
+        ) : null}
+
+        <section className="fh-section">
+          <p className="results-count">
+            Ser du etter flere håndverkere?{" "}
+            <a href="/category">Se alle fagområder</a>
+          </p>
+        </section>
+      </main>
+      <p>
+        Follohjelp er en lokal oversikt over håndverksbedrifter i Follo. Vi
+        formidler ikke anbud og videreselger ikke henvendelser – kun en ryddig
+        liste over lokale aktører du kan ta direkte kontakt med.
+      </p>
+    </>
   );
 }

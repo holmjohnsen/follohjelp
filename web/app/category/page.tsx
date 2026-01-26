@@ -18,30 +18,37 @@ export default async function CategoryLandingPage() {
   const categories = await getCategories();
 
   return (
-    <main className="container">
-      <section className="hero">
-        <h1>Kategorier</h1>
-        <p className="subtitle">
-          Utforsk fagområder og finn lokale håndverkere i Follo.
-        </p>
-      </section>
+    <>
+      <main className="container">
+        <section className="hero">
+          <h1>Kategorier</h1>
+          <p className="subtitle">
+            Utforsk fagområder og finn lokale håndverkere i Follo.
+          </p>
+        </section>
 
-      <section className="fh-section">
-        <HomeSearchBar source="category" />
-      </section>
+        <section className="fh-section">
+          <HomeSearchBar source="category" />
+        </section>
 
-      <section className="fh-section">
-        <div className="fh-card">
-          <CategoryPills
-            items={categories}
-            source="category_landing"
-            limit={categories.length || 12}
-          />
-          {categories.length === 0 ? (
-            <p className="fh-lead">Ingen kategorier tilgjengelig ennå.</p>
-          ) : null}
-        </div>
-      </section>
-    </main>
+        <section className="fh-section">
+          <div className="fh-card">
+            <CategoryPills
+              items={categories}
+              source="category_landing"
+              limit={categories.length || 12}
+            />
+            {categories.length === 0 ? (
+              <p className="fh-lead">Ingen kategorier tilgjengelig ennå.</p>
+            ) : null}
+          </div>
+        </section>
+      </main>
+      <p>
+        Follohjelp er en lokal oversikt over håndverksbedrifter i Follo. Vi
+        formidler ikke anbud og videreselger ikke henvendelser – kun en ryddig
+        liste over lokale aktører du kan ta direkte kontakt med.
+      </p>
+    </>
   );
 }
