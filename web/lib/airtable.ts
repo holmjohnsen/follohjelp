@@ -664,6 +664,37 @@ export async function getProvidersByCategorySlug(slug: string) {
   };
 }
 
+export async function getProviderBySlug(slug: string) {
+  const trimmedSlug = slug.trim();
+  if (!trimmedSlug) {
+    return null;
+  }
+
+  const filterFormula = `{slug}="${escapeFormulaValue(trimmedSlug)}"`;
+  const providers = await fetchProvidersByFormula(filterFormula, false);
+
+  if (providers.length === 0) {
+    return null;
+  }
+
+  const provider = providers[0];
+  const categories = await getCategories();
+  const idToName = new Map(categories.map((cat) => [cat.id, cat.name]));
+  const categoryNames = (provider.category ?? [])
+    .map((idOrName) => idToName.get(idOrName) ?? idOrName)
+    .filter(Boolean);
+
+  return {
+    id: provider.id,
+    name: provider.name,
+    category: categoryNames.length ? categoryNames : undefined,
+    location: provider.location,
+    description: provider.description,
+    phone: provider.phone,
+    url: provider.url,
+  } satisfies Provider;
+}
+
 export async function createPendingProvider(provider: ProviderInput) {
   const apiKey = ensureEnv(AIRTABLE_API_KEY, "AIRTABLE_API_KEY");
   const baseId = ensureEnv(AIRTABLE_BASE_ID, "AIRTABLE_BASE_ID");
