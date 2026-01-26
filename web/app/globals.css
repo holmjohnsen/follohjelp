@@ -289,13 +289,43 @@ select:focus {
   font-size: 14px;
 }
 
-.supplier-meta-row {
+.provider-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.provider-meta-item {
   font-size: 14px;
   color: var(--muted);
-  margin-top: 10px;
+  position: relative;
+}
+
+.provider-meta-item a {
+  text-decoration: underline;
+}
+
+.provider-meta-item + .provider-meta-item {
+  padding-left: 12px;
+}
+
+.provider-meta-item + .provider-meta-item::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--border);
+}
+
+@media (max-width: 640px) {
+  .provider-meta {
+    gap: 10px;
+  }
+
+  .provider-meta-item + .provider-meta-item::before {
+    color: #e2e8f0;
+  }
 }
 
 .supplier-location {

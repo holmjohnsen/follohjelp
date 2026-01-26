@@ -87,17 +87,17 @@ export default async function ProviderPage({ params }: PageProps) {
           </div>
         ) : null}
         {locationName || provider.phone || provider.url ? (
-          <div className="supplier-meta-row">
+          <div className="provider-meta">
             {locationName ? (
-              <span className="supplier-location">{locationName}</span>
+              <span className="provider-meta-item">{locationName}</span>
             ) : null}
             {provider.phone ? (
-              <span className="supplier-contact">
+              <span className="provider-meta-item">
                 <a href={`tel:${provider.phone}`}>{provider.phone}</a>
               </span>
             ) : null}
             {provider.url ? (
-              <span className="supplier-contact">
+              <span className="provider-meta-item">
                 <a
                   href={provider.url}
                   target="_blank"
