@@ -72,6 +72,9 @@ export default async function ProviderPage({ params }: PageProps) {
   const locationName = provider.location
     ? await getLocationNameById(provider.location)
     : null;
+  const emailSubject = encodeURIComponent(
+    "Forespørsel sendt via follohjelp.no",
+  );
 
   return (
     <main className="container">
@@ -86,26 +89,43 @@ export default async function ProviderPage({ params }: PageProps) {
             ))}
           </div>
         ) : null}
-        {locationName || provider.phone || provider.url ? (
-          <div className="provider-meta">
+        {locationName || provider.phone || provider.url || provider.email ? (
+          <div className="provider-contact">
             {locationName ? (
-              <span className="provider-meta-item">{locationName}</span>
+              <div className="provider-contactItem">
+                <span aria-hidden="true">📍</span>
+                <span>Sted:</span>
+                <span>{locationName}</span>
+              </div>
             ) : null}
             {provider.phone ? (
-              <span className="provider-meta-item">
+              <div className="provider-contactItem">
+                <span aria-hidden="true">📞</span>
+                <span>Telefon:</span>
                 <a href={`tel:${provider.phone}`}>{provider.phone}</a>
-              </span>
+              </div>
             ) : null}
             {provider.url ? (
-              <span className="provider-meta-item">
+              <div className="provider-contactItem">
+                <span aria-hidden="true">🌐</span>
+                <span>Nettside:</span>
                 <a
                   href={provider.url}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Nettside
+                  Besøk nettside
                 </a>
-              </span>
+              </div>
+            ) : null}
+            {provider.email ? (
+              <div className="provider-contactItem">
+                <span aria-hidden="true">✉️</span>
+                <span>E-post:</span>
+                <a href={`mailto:${provider.email}?subject=${emailSubject}`}>
+                  {provider.email}
+                </a>
+              </div>
             ) : null}
           </div>
         ) : null}

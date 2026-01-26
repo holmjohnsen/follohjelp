@@ -9,6 +9,7 @@ export type Provider = {
   category?: string[];
   location: string;
   description: string;
+  email?: string;
   phone?: string;
   url?: string;
 };
@@ -722,7 +723,7 @@ export async function getProviderBySlug(slug: string) {
   }
 
   const filterFormula = `{slug}="${escapeFormulaValue(trimmedSlug)}"`;
-  const providers = await fetchProvidersByFormula(filterFormula, false);
+  const providers = await fetchProvidersByFormula(filterFormula, true);
 
   if (providers.length === 0) {
     return null;
@@ -742,6 +743,7 @@ export async function getProviderBySlug(slug: string) {
     category: categoryNames.length ? categoryNames : undefined,
     location: locationId,
     description: provider.description,
+    email: provider.email,
     phone: provider.phone,
     url: provider.url,
   } satisfies Provider;
