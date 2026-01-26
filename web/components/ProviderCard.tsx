@@ -37,7 +37,9 @@ export default function ProviderCard({
           className="supplier-card-link"
           href={`/leverandor/${providerSlug}`}
           aria-label={`Se ${provider.name}`}
-        />
+        >
+          <span className="sr-only">Se {provider.name}</span>
+        </Link>
       ) : null}
       <div className="supplier-content">
         <div className="supplier-name">{provider.name}</div>
