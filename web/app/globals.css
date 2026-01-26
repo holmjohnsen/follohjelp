@@ -276,11 +276,16 @@ select:focus {
   pointer-events: none;
 }
 
-.supplier-card-linkable a,
-.supplier-card-linkable button {
+.supplier-card-linkable .supplier-content a,
+.supplier-card-linkable .supplier-content button {
   position: relative;
   z-index: 3;
   pointer-events: auto;
+}
+
+.supplier-card-link:focus-visible {
+  outline: 3px solid rgba(10, 124, 102, 0.35);
+  outline-offset: 2px;
 }
 
 .supplier-category {
