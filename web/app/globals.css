@@ -236,12 +236,15 @@ select:focus {
   overflow: hidden;
   transition: 0.2s;
   cursor: pointer;
-  position: relative;
 }
 
 .supplier-card:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   transform: translateY(-2px);
+}
+
+.supplier-card-linkable {
+  position: relative;
 }
 
 .supplier-card-linkable:hover {
@@ -253,6 +256,7 @@ select:focus {
   inset: 0;
   z-index: 1;
   display: block;
+  border-radius: inherit;
 }
 
 .supplier-image {
@@ -264,8 +268,17 @@ select:focus {
 
 .supplier-content {
   padding: 18px;
+}
+
+.supplier-card-linkable .supplier-content {
   position: relative;
   z-index: 2;
+}
+
+.supplier-card-linkable a,
+.supplier-card-linkable button {
+  position: relative;
+  z-index: 3;
 }
 
 .supplier-category {
