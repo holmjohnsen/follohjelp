@@ -293,7 +293,8 @@ select:focus {
   margin-top: 12px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px 18px;
+  row-gap: 10px;
+  column-gap: 24px;
 }
 
 .provider-contactItem {
@@ -307,6 +308,11 @@ select:focus {
 .provider-contactItem a {
   text-decoration: underline;
   font-weight: 600;
+}
+
+.provider-contactLink {
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 640px) {

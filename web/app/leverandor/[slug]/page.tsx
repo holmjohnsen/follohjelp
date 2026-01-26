@@ -75,6 +75,9 @@ export default async function ProviderPage({ params }: PageProps) {
   const emailSubject = encodeURIComponent(
     "Forespørsel sendt via follohjelp.no",
   );
+  const websiteLabel = provider.url
+    ? provider.url.replace(/^https?:\/\//i, "")
+    : null;
 
   return (
     <main className="container">
@@ -113,8 +116,9 @@ export default async function ProviderPage({ params }: PageProps) {
                   href={provider.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="provider-contactLink"
                 >
-                  Besøk nettside
+                  {websiteLabel}
                 </a>
               </div>
             ) : null}
