@@ -10,6 +10,7 @@ export type Provider = {
   location: string;
   description: string;
   slug?: string;
+  updatedAt?: string;
   email?: string;
   phone?: string;
   url?: string;
@@ -44,6 +45,27 @@ function ensureEnv(key: string | undefined, name: string) {
 
 function escapeFormulaValue(value: string) {
   return value.replace(/"/g, '\\"');
+}
+
+function parseProviderUpdatedAt(fields: Record<string, unknown>) {
+  const candidates = [
+    fields["updatedAt"],
+    fields["updated_at"],
+    fields["last_modified"],
+    fields["lastModified"],
+    fields["Last modified"],
+  ];
+
+  for (const candidate of candidates) {
+    if (!candidate) continue;
+    const normalized = String(candidate).trim();
+    if (!normalized) continue;
+    if (!Number.isNaN(Date.parse(normalized))) {
+      return normalized;
+    }
+  }
+
+  return undefined;
 }
 
 function buildFilterFormula(
@@ -226,6 +248,7 @@ async function fetchProviders(filters: ProviderFilters, includeEmail = false) {
         locationIds: locationIds.length ? locationIds : undefined,
         description,
         slug: slugField || undefined,
+        updatedAt: parseProviderUpdatedAt(fields),
         phone: fields["phone"] ? String(fields["phone"]).trim() : undefined,
         url: fields["url"] ? String(fields["url"]).trim() : undefined,
         email: includeEmail && fields["email"] ? String(fields["email"]).trim() : undefined,
@@ -652,6 +675,7 @@ async function fetchProvidersByFormula(
         locationIds: locationIds.length ? locationIds : undefined,
         description,
         slug: slugField || undefined,
+        updatedAt: parseProviderUpdatedAt(fields),
         phone: fields["phone"] ? String(fields["phone"]).trim() : undefined,
         url: fields["url"] ? String(fields["url"]).trim() : undefined,
         email: includeEmail && fields["email"] ? String(fields["email"]).trim() : undefined,
@@ -710,6 +734,7 @@ export async function getProvidersByCategorySlug(slug: string) {
         location: provider.location,
         description: provider.description,
         slug: provider.slug,
+        updatedAt: provider.updatedAt,
         phone: provider.phone,
         url: provider.url,
       } satisfies Provider;
@@ -750,6 +775,7 @@ export async function getProviderBySlug(slug: string) {
     location: locationId,
     description: provider.description,
     slug: provider.slug,
+    updatedAt: provider.updatedAt,
     email: provider.email,
     phone: provider.phone,
     url: provider.url,
