@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "metrics:pull": "node scripts/pull-metrics.mjs"
   },
   "dependencies": {
     "@netlify/plugin-nextjs": "^5.7.2",
