@@ -133,6 +133,18 @@ export type Lead = {
   assignedProviders?: string;
 };
 
+export type MetricsSourceData = {
+  leads: Array<{
+    createdAt: string | null;
+    assignedProviders?: string;
+  }>;
+  providers: Array<{
+    status?: string;
+    email?: string;
+  }>;
+  providersStatusFieldPresent: boolean;
+};
+
 export type Category = {
   id: string;
   name: string;
@@ -587,6 +599,170 @@ export async function getLeads(limit = 20) {
         : undefined,
     } satisfies Lead;
   });
+}
+
+function pickStringField(
+  fields: Record<string, unknown>,
+  candidates: string[],
+): string | undefined {
+  for (const key of candidates) {
+    const value = fields[key];
+    if (typeof value !== "string") continue;
+    const trimmed = value.trim();
+    if (trimmed) return trimmed;
+  }
+  return undefined;
+}
+
+function pickCreatedAt(
+  fields: Record<string, unknown>,
+  createdTime?: string,
+): string | null {
+  const fromFields = pickStringField(fields, [
+    "created_at",
+    "Created",
+    "createdAt",
+    "timestamp",
+    "Timestamp",
+  ]);
+
+  const candidates = [fromFields, createdTime];
+  for (const candidate of candidates) {
+    if (!candidate) continue;
+    const timestamp = Date.parse(candidate);
+    if (!Number.isNaN(timestamp)) {
+      return new Date(timestamp).toISOString();
+    }
+  }
+
+  return null;
+}
+
+export async function getMetricsSourceData(): Promise<MetricsSourceData> {
+  const apiKey = ensureEnv(AIRTABLE_API_KEY, "AIRTABLE_API_KEY");
+  const baseId = ensureEnv(AIRTABLE_BASE_ID, "AIRTABLE_BASE_ID");
+  const leadsTable = ensureEnv(AIRTABLE_LEADS_TABLE, "AIRTABLE_LEADS_TABLE");
+  const providersTable = ensureEnv(
+    AIRTABLE_PROVIDERS_TABLE ?? "Providers",
+    "AIRTABLE_PROVIDERS_TABLE",
+  );
+  const assignedField = AIRTABLE_ASSIGNED_PROVIDERS_FIELD.trim();
+
+  const leads: MetricsSourceData["leads"] = [];
+  let leadsOffset: string | undefined;
+
+  do {
+    const searchParams = new URLSearchParams({ pageSize: "100" });
+    if (leadsOffset) {
+      searchParams.set("offset", leadsOffset);
+    }
+
+    const response = await fetch(
+      `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(
+        leadsTable,
+      )}?${searchParams.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          Accept: "application/json",
+        },
+      },
+    );
+
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(
+        `Failed to fetch leads for metrics: ${response.status} ${response.statusText} - ${text}`,
+      );
+    }
+
+    const data: {
+      records?: Array<{
+        id: string;
+        createdTime?: string;
+        fields: Record<string, unknown>;
+      }>;
+      offset?: string;
+    } = await response.json();
+
+    for (const record of data.records ?? []) {
+      const fields = record.fields ?? {};
+      const assignedProviders = pickStringField(fields, [
+        assignedField,
+        "assignedProviders",
+        "assigned_providers",
+      ]);
+
+      leads.push({
+        createdAt: pickCreatedAt(fields, record.createdTime),
+        assignedProviders,
+      });
+    }
+
+    leadsOffset = data.offset;
+  } while (leadsOffset);
+
+  const providers: MetricsSourceData["providers"] = [];
+  let providersOffset: string | undefined;
+  let providersStatusFieldPresent = false;
+  const useView = Boolean(AIRTABLE_PROVIDERS_VIEW?.trim());
+
+  do {
+    const searchParams = new URLSearchParams({ pageSize: "100" });
+    if (useView) {
+      searchParams.set("view", AIRTABLE_PROVIDERS_VIEW!.trim());
+    }
+    if (providersOffset) {
+      searchParams.set("offset", providersOffset);
+    }
+
+    const response = await fetch(
+      `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(
+        providersTable,
+      )}?${searchParams.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          Accept: "application/json",
+        },
+      },
+    );
+
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(
+        `Failed to fetch providers for metrics: ${response.status} ${response.statusText} - ${text}`,
+      );
+    }
+
+    const data: {
+      records?: Array<{
+        id: string;
+        fields: Record<string, unknown>;
+      }>;
+      offset?: string;
+    } = await response.json();
+
+    for (const record of data.records ?? []) {
+      const fields = record.fields ?? {};
+      if (Object.prototype.hasOwnProperty.call(fields, "status")) {
+        providersStatusFieldPresent = true;
+      }
+
+      providers.push({
+        status: pickStringField(fields, ["status"]),
+        email: pickStringField(fields, ["email"]),
+      });
+    }
+
+    providersOffset = data.offset;
+  } while (providersOffset);
+
+  return {
+    leads,
+    providers,
+    providersStatusFieldPresent,
+  };
 }
 
 async function fetchProvidersByFormula(
