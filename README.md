@@ -18,6 +18,9 @@ Local directory for services in the Follo region.
 - The frontend does not call Airtable directly.
 - All Airtable reads and writes go through Next.js API routes and server-side helpers.
 - Netlify builds the app from `/web` and uses the Next.js adapter to handle serverless behavior automatically.
+- Pages:
+  - `/category` lists categories
+  - `/category/[slug]` lists providers filtered by category
 
 ## Airtable Schema
 
@@ -26,7 +29,7 @@ Local directory for services in the Follo region.
 - `name`
 - `category` (linked to `Categories`)
 - `location` (linked to `Locations`)
-- `status` (`active` | `pending`)
+- `status` (`active` | `pending`) — only `active` providers are shown in the UI
 - `category_other` (text fallback)
 - `location_other` (text fallback)
 
