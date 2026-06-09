@@ -294,7 +294,7 @@ export async function getCategories() {
     "AIRTABLE_CATEGORIES_TABLE",
   );
 
-  const categories: Category[] = [];
+  const allRecords: Array<{ id: string; fields: Record<string, unknown> }> = [];
   let offset: string | undefined;
 
   do {
@@ -337,28 +337,31 @@ export async function getCategories() {
       offset?: string;
     } = await response.json();
 
-    (data.records ?? []).forEach((record) => {
-      const fields = record.fields ?? {};
-      const name = String(fields["name"] ?? "").trim();
-      if (!name) return;
-
-      const activeField = fields["active"];
-      const isActive =
-        activeField === undefined ||
-        activeField === null ||
-        Boolean(activeField);
-      if (!isActive) return;
-
-      const slugField = String(fields["slug"] ?? "").trim();
-      categories.push({
-        id: record.id,
-        name,
-        slug: slugField || slugifyCategory(name),
-      });
-    });
-
+    allRecords.push(...(data.records ?? []));
     offset = data.offset;
   } while (offset);
+
+  // Airtable omits unchecked checkbox fields from the response entirely.
+  // If any record has active=true, the field is in use and we treat absence as inactive.
+  // If no record has active=true, the field doesn't exist yet — show all (backward compat).
+  const activeFieldInUse = allRecords.some((r) => r.fields["active"] === true);
+
+  const categories: Category[] = [];
+
+  for (const record of allRecords) {
+    const fields = record.fields ?? {};
+    const name = String(fields["name"] ?? "").trim();
+    if (!name) continue;
+
+    if (activeFieldInUse && fields["active"] !== true) continue;
+
+    const slugField = String(fields["slug"] ?? "").trim();
+    categories.push({
+      id: record.id,
+      name,
+      slug: slugField || slugifyCategory(name),
+    });
+  }
 
   categories.sort((a, b) => a.name.localeCompare(b.name, "nb"));
   return categories;
