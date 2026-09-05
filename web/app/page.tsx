@@ -3,8 +3,13 @@ import HomeSearchBar from "@/components/HomeSearchBar";
 import CategoryPills from "@/components/CategoryPills";
 import { getCategories } from "@/lib/airtable";
 
-// Airtable-backed data must not be cached into the static build output.
-export const dynamic = "force-dynamic";
+// Cache the rendered homepage (incl. the Airtable category fetch) for 5
+// minutes instead of re-hitting Airtable on every single request. Without
+// this, moving the category fetch server-side (see below) forced Airtable's
+// round-trip onto the critical path of every page load, which is what
+// caused the mobile regression (TTFB/FCP delayed, pushing GTM's script
+// execution into the FCP→TTI window and inflating Total Blocking Time).
+export const revalidate = 300;
 
 export default async function Home() {
   const categories = await getCategories();
