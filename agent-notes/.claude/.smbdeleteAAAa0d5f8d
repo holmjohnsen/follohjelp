@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls /Volumes/holmjohnsen/Developer/openclaw-work/projects/follohjelp/repo && ls /Volumes/holmjohnsen/Developer/openclaw-work/projects/follohjelp/tasks && ls /Volumes/holmjohnsen/Developer/openclaw-work/projects/follohjelp/notes)",
+      "Read(//Users/oyvind/Developer/follohjelp/web/**)"
+    ]
+  }
+}
