@@ -1,0 +1,10 @@
+{
+  "generatedAt": "2026-02-28T22:46:28.969Z",
+  "kpis": {
+    "leads_created_30d": 1,
+    "providers_active": 5,
+    "providers_with_email_active": 5,
+    "leads_with_assigned_providers_30d": 1,
+    "match_rate_30d": 1
+  }
+}

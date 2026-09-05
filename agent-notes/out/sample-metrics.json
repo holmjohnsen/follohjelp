@@ -1,0 +1,17 @@
+{
+  "note": "Sample output - run script when server is live to get real data",
+  "expectedStructure": {
+    "generatedAt": "2026-02-28T00:00:00.000Z",
+    "kpis": {
+      "leads_created_30d": 0,
+      "providers_active": 0,
+      "providers_with_email_active": 0,
+      "leads_with_assigned_providers_30d": 0,
+      "match_rate_30d": 0
+    }
+  },
+  "howToRun": {
+    "local": "METRICS_TOKEN=xxx node projects/follohjelp/run-metrics.js",
+    "withURL": "METRICS_URL=https://your-deploy-url.vercel.app/api/metrics METRICS_TOKEN=xxx node projects/follohjelp/run-metrics.js"
+  }
+}

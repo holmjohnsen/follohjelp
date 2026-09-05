@@ -1,0 +1,149 @@
+{
+  "project": "Follohjelp",
+  "airtable": {
+    "baseId": "AIRTABLE_BASE_ID (env)",
+    "apiKey": "AIRTABLE_API_KEY (env)"
+  },
+  "kpis": [
+    {
+      "name": "organic_sessions",
+      "label": "Organic Sessions",
+      "source": "Google Analytics (GA4)",
+      "table": null,
+      "field": null,
+      "query": "GA4 property: sessions where source/medium contains 'google/organic'",
+      "current": null,
+      "target": 1000,
+      "timeframe": "90 days",
+      "unit": "sessions"
+    },
+    {
+      "name": "supplier_leads",
+      "label": "Supplier Leads (Providers)",
+      "source": "Airtable",
+      "table": "Providers",
+      "field": "id",
+      "query": "SELECT COUNT(*) FROM Providers WHERE status = 'active'",
+      "current": null,
+      "target": 50,
+      "timeframe": "30 days",
+      "unit": "providers",
+      "edgeCases": "Only count 'active' status, exclude pending"
+    },
+    {
+      "name": "conversion_rate",
+      "label": "Conversion Rate (Lead to Contact)",
+      "source": "Airtable",
+      "table": "Leads",
+      "fields": {
+        "totalLeads": "id (COUNT)",
+        "contactedLeads": "assignedProviders IS NOT NULL"
+      },
+      "query": "SELECT COUNT(*) as total, COUNT(assignedProviders) as contacted FROM Leads WHERE created >= DATE_SUB(NOW(), INTERVAL 30 DAY)",
+      "current": null,
+      "target": 5,
+      "timeframe": "90 days",
+      "unit": "%",
+      "calculation": "(contacted / total) * 100",
+      "edgeCases": "Leads without assigned providers = not contacted yet"
+    },
+    {
+      "name": "pages_indexed",
+      "label": "Pages Indexed",
+      "source": "Google Search Console",
+      "table": null,
+      "field": null,
+      "query": "GSC property: pages where clicks > 0",
+      "current": null,
+      "target": 100,
+      "timeframe": "60 days",
+      "unit": "pages"
+    },
+    {
+      "name": "top_queries",
+      "label": "Top Queries",
+      "source": "Google Search Console",
+      "table": null,
+      "field": null,
+      "query": "GSC property: top 20 queries by impressions",
+      "current": null,
+      "target": 20,
+      "timeframe": "90 days",
+      "unit": "queries"
+    },
+    {
+      "name": "leads_created",
+      "label": "Leads Created",
+      "source": "Airtable",
+      "table": "Leads",
+      "field": "id",
+      "query": "SELECT COUNT(*) FROM Leads WHERE created >= DATE_SUB(NOW(), INTERVAL 30 DAY)",
+      "current": null,
+      "target": 100,
+      "timeframe": "30 days",
+      "unit": "leads",
+      "edgeCases": "All leads, regardless of status"
+    },
+    {
+      "name": "providers_matched",
+      "label": "Providers Matched to Leads",
+      "source": "Airtable",
+      "table": "Leads",
+      "field": "assignedProviders",
+      "query": "SELECT COUNT(*) FROM Leads WHERE assignedProviders IS NOT NULL AND created >= DATE_SUB(NOW(), INTERVAL 30 DAY)",
+      "current": null,
+      "target": 80,
+      "timeframe": "30 days",
+      "unit": "leads"
+    }
+  ],
+  "tables": {
+    "Providers": {
+      "description": "Service providers/suppliers",
+      "fields": {
+        "name": "string - provider name",
+        "category": "linked record - Categories",
+        "location": "linked record - Locations", 
+        "description": "string",
+        "status": "string - 'active' or 'pending'",
+        "email": "string",
+        "phone": "string",
+        "url": "string",
+        "slug": "string",
+        "updatedAt": "datetime",
+        "notes": "string",
+        "need_review": "boolean"
+      },
+      "filter": "status = 'active'"
+    },
+    "Leads": {
+      "description": "Customer leads/henvendelser",
+      "fields": {
+        "category": "string",
+        "description": "string",
+        "location": "string",
+        "name": "string",
+        "email": "string",
+        "phone": "string",
+        "assignedProviders": "string - comma-separated provider names",
+        "created_at": "datetime (auto)"
+      },
+      "defaultSort": "created_at DESC"
+    },
+    "Categories": {
+      "description": "Service categories",
+      "fields": {
+        "name": "string",
+        "slug": "string",
+        "active": "boolean"
+      }
+    },
+    "Locations": {
+      "description": "Geographic locations",
+      "fields": {
+        "name": "string",
+        "active": "boolean"
+      }
+    }
+  }
+}
