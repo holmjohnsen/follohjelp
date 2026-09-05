@@ -14,6 +14,7 @@ type Props = {
   initialQuery?: string;
   placeholder?: string;
   source?: "home" | "search" | "category";
+  initialCategories?: Category[];
 };
 
 const DESKTOP_PLACEHOLDER =
@@ -24,11 +25,14 @@ export default function HomeSearchBar({
   initialQuery = "",
   placeholder,
   source = "home",
+  initialCategories,
 }: Props) {
   const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
   const [error, setError] = useState<string | null>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<Category[]>(
+    initialCategories ?? [],
+  );
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -36,6 +40,10 @@ export default function HomeSearchBar({
   }, [initialQuery]);
 
   useEffect(() => {
+    // Server already provided the category list (e.g. homepage) — skip the
+    // extra client-side round trip to /api/meta/search-options.
+    if (initialCategories) return;
+
     const loadCategories = async () => {
       try {
         const response = await fetch("/api/meta/search-options");
@@ -47,7 +55,7 @@ export default function HomeSearchBar({
       }
     };
     void loadCategories();
-  }, []);
+  }, [initialCategories]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;

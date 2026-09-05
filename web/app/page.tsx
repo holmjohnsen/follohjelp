@@ -1,8 +1,14 @@
 import CookieBanner from "@/components/CookieBanner";
 import HomeSearchBar from "@/components/HomeSearchBar";
-import HomeCategories from "@/components/HomeCategories";
+import CategoryPills from "@/components/CategoryPills";
+import { getCategories } from "@/lib/airtable";
 
-export default function Home() {
+// Airtable-backed data must not be cached into the static build output.
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const categories = await getCategories();
+
   return (
     <>
       <CookieBanner />
@@ -20,7 +26,7 @@ export default function Home() {
           Follohjelp dekker Drøbak, Ås, Ski, Vestby, Nesodden og omegn.
         </p>
 
-        <HomeSearchBar />
+        <HomeSearchBar initialCategories={categories} />
 
         <p className="results-count">
           🛠️ Follohjelp er i oppstart og bygges steg for steg. Tips oss gjerne
@@ -30,7 +36,13 @@ export default function Home() {
 
         <section className="categories">
           <h2>Populære fagområder</h2>
-          <HomeCategories />
+          {categories.length > 0 ? (
+            <CategoryPills
+              items={categories}
+              source="home"
+              limit={categories.length || 12}
+            />
+          ) : null}
         </section>
 
         <section className="lead-section">
