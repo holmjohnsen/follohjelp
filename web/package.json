@@ -10,7 +10,7 @@
     "metrics:pull": "node scripts/pull-metrics.mjs"
   },
   "dependencies": {
-    "@netlify/plugin-nextjs": "^5.7.2",
+    "@netlify/plugin-nextjs": "^5.15.13",
     "next": "^16.1.6",
     "nodemailer": "^8.0.1",
     "react": "19.2.3",
