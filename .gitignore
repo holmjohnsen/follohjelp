@@ -9,3 +9,9 @@
 # OS / editor
 .DS_Store
 
+
+# SMB soft-delete artifacts (created by the SMB mount when a file is
+# overwritten/renamed concurrently by VS Code and the AI device bridge).
+# These carry no real content and should never be tracked.
+.smbdelete*
+**/.smbdelete*
