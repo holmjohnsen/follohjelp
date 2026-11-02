@@ -3,7 +3,10 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Om Follohjelp – en lokal oversikt over håndverkere i Follo",
   description:
-    "Bakgrunnen for Follohjelp og hvorfor siden ble laget: en enkel, lokal oversikt over håndverkere i Follo.",
+    "Hvorfor Follohjelp ble laget: en enkel, lokal oversikt over rørleggere, elektrikere og snekkere i Follo – uten anbud, mellomledd eller falske anmeldelser.",
+  alternates: {
+    canonical: "/om-follohjelp",
+  },
 };
 
 const introText =

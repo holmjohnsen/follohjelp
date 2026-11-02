@@ -7,8 +7,7 @@ import CategoryPills from "@/components/CategoryPills";
 import { ProviderCardTrack } from "@/components/ProviderCardTrack";
 import ProviderCard from "@/components/ProviderCard";
 import EmptyResultTracker from "@/components/EmptyResultTracker";
-
-const baseUrl = "https://follohjelp.no";
+import { AREA_SERVED, BASE_URL, schemaTypeForCategory } from "@/lib/site";
 
 export async function generateMetadata({
   params,
@@ -54,7 +53,7 @@ export async function generateMetadata({
 
   return {
     title: `${matchedCategory.name} i Follo – lokale ${pluralLower} | Follohjelp`,
-    description: `Finn lokale ${pluralLower} i Follo. Se bedrifter i Drøbak, Ås, Ski, Vestby, Nesodden og omegn.`,
+    description: `Finn lokale ${pluralLower} i Follo. Se bedrifter i Drøbak, Ås, Ski, Vestby, Nesodden og omegn – med kontaktinfo, så du kan ta kontakt direkte.`,
     robots,
     alternates: {
       canonical: `/category/${matchedCategory.slug}`,
@@ -135,40 +134,83 @@ export default async function CategoryPage({
           <EmptyResultTracker context="category" category={matchedCategory.slug} />
         ) : null}
 
-        {providers.length > 0 ? (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify(
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
                 {
-                  "@context": "https://schema.org",
-                  "@type": "ItemList",
-                  itemListElement: providers.map((provider, index) => ({
-                    "@type": "ListItem",
-                    position: index + 1,
-                    item: {
-                      "@type": "LocalBusiness",
-                      name: provider.name,
-                      ...(provider.description
-                        ? { description: provider.description }
-                        : {}),
-                      ...(provider.phone ? { telephone: provider.phone } : {}),
-                      areaServed: "Follo",
-                      address: {
-                        "@type": "PostalAddress",
-                        addressRegion: "Akershus",
-                        addressCountry: "NO",
-                      },
-                      url: `${baseUrl}/category/${matchedCategory.slug}#provider-${provider.id}`,
+                  "@type": "BreadcrumbList",
+                  itemListElement: [
+                    {
+                      "@type": "ListItem",
+                      position: 1,
+                      name: "Follohjelp",
+                      item: `${BASE_URL}/`,
                     },
-                  })),
+                    {
+                      "@type": "ListItem",
+                      position: 2,
+                      name: "Kategorier",
+                      item: `${BASE_URL}/category`,
+                    },
+                    {
+                      "@type": "ListItem",
+                      position: 3,
+                      name: matchedCategory.name,
+                      item: `${BASE_URL}/category/${matchedCategory.slug}`,
+                    },
+                  ],
                 },
-                null,
-                2,
-              ),
-            }}
-          />
-        ) : null}
+                ...(providers.length > 0
+                  ? [
+                      {
+                        "@type": "ItemList",
+                        name: `${matchedCategory.name} i Follo`,
+                        numberOfItems: providers.length,
+                        itemListElement: providers.map((provider, index) => {
+                          const slug = provider.slug?.trim();
+                          const url = slug
+                            ? `${BASE_URL}/leverandor/${slug}`
+                            : `${BASE_URL}/category/${matchedCategory.slug}#provider-${provider.id}`;
+                          return {
+                            "@type": "ListItem",
+                            position: index + 1,
+                            item: {
+                              "@type": schemaTypeForCategory(matchedCategory.name),
+                              ...(slug ? { "@id": `${url}#business` } : {}),
+                              name: provider.name,
+                              ...(provider.description
+                                ? { description: provider.description }
+                                : {}),
+                              ...(provider.phone
+                                ? { telephone: provider.phone }
+                                : {}),
+                              areaServed: AREA_SERVED,
+                              address: {
+                                "@type": "PostalAddress",
+                                ...(locationNameById.get(provider.location)
+                                  ? {
+                                      addressLocality: locationNameById.get(
+                                        provider.location,
+                                      ),
+                                    }
+                                  : {}),
+                                addressRegion: "Akershus",
+                                addressCountry: "NO",
+                              },
+                              url,
+                            },
+                          };
+                        }),
+                      },
+                    ]
+                  : []),
+              ],
+            }),
+          }}
+        />
 
         {otherCategories.length ? (
           <section className="fh-section">

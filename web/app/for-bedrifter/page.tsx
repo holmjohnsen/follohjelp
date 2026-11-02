@@ -1,11 +1,14 @@
 import ProviderSignupForm from "@/components/ProviderSignupForm";
-import Script from "next/script";
+import { faqItems } from "@/lib/content";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "For håndverkere i Follo – bli synlig lokalt | Follohjelp",
   description:
     "En lokal oversikt for håndverkere i Follo. Ingen budrunder eller betaling per henvendelse. Registrer bedriften i oppstartsfasen.",
+  alternates: {
+    canonical: "/for-bedrifter",
+  },
 };
 
 const heroIntro =
@@ -22,39 +25,6 @@ const howSteps = [
   "📝 Fortell litt om bedriften din i skjemaet under.",
   "🔍 Vi går raskt gjennom og tar kontakt hvis noe er uklart.",
   "📍 Når alt er klart, kan lokale kunder ta kontakt direkte.",
-];
-
-const faqItems = [
-  {
-    question: "Hva koster det å være med på Follohjelp?",
-    answer:
-      "I oppstartsfasen tester vi konseptet med et begrenset antall bedrifter. Det er uforpliktende å registrere seg, og eventuelle kostnader avtales før noe publiseres.",
-  },
-  {
-    question: "Hvordan får jeg henvendelser fra kunder?",
-    answer:
-      "Folk som bruker Follohjelp tar kontakt direkte med deg via telefon eller e-post i oppføringen. Det er ingen mellomledd.",
-  },
-  {
-    question: "Er dette en annonse- eller formidlingstjeneste?",
-    answer:
-      "Nei. Follohjelp er en lokal oversikt. Folk tar kontakt direkte med deg, uten mellomledd, budrunder eller betaling per henvendelse.",
-  },
-  {
-    question: "Når blir bedriften min synlig?",
-    answer:
-      "Etter at vi har gått gjennom informasjonen og avklart eventuelle spørsmål, publiseres oppføringen. Du får beskjed når den er live.",
-  },
-  {
-    question: "Kan jeg endre informasjon senere?",
-    answer:
-      "Ja. Ta kontakt hvis du vil oppdatere tjenester, kontaktinfo eller beskrivelse, så hjelper vi deg.",
-  },
-  {
-    question: "Hvem står bak Follohjelp?",
-    answer:
-      "Follohjelp er laget lokalt, med mål om å gjøre det enklere for folk i Follo å finne seriøse håndverkere i nærområdet.",
-  },
 ];
 
 const fitList = [
@@ -175,10 +145,8 @@ export default function ForBedrifterPage() {
         </div>
       </section>
 
-      <Script
-        id="faq-schema"
+      <script
         type="application/ld+json"
-        strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",

@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Personvernerklæring – Follohjelp.no",
+  title: "Personvernerklæring | Follohjelp",
   description:
     "Les om hvordan Follohjelp behandler personopplysninger, hvilke informasjonskapsler vi bruker og dine rettigheter etter GDPR.",
+  alternates: {
+    canonical: "/personvern",
+  },
 };
 
 export default function PersonvernPage() {

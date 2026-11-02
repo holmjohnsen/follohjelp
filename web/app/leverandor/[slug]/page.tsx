@@ -1,5 +1,16 @@
-import { getLocationNameById, getProviderBySlug } from "@/lib/airtable";
+import {
+  getCategories,
+  getLocationNameById,
+  getProviderBySlug,
+} from "@/lib/airtable";
+import {
+  AREA_SERVED,
+  BASE_URL,
+  schemaTypeForCategory,
+  truncateAtWord,
+} from "@/lib/site";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export const revalidate = 3600;
@@ -19,15 +30,25 @@ function buildDescription({
   location?: string;
   description?: string;
 }) {
+  const categoryText = (category?.[0] ?? "håndverker").toLowerCase();
+  const locationText = location?.trim() || "Follo";
+  const context = `${category?.[0] ?? "Håndverker"} i ${locationText} – se kontaktinfo på Follohjelp.`;
   const trimmed = description?.trim();
-  if (trimmed) {
-    return trimmed.length > 160 ? `${trimmed.slice(0, 157)}...` : trimmed;
+
+  if (!trimmed) {
+    return truncateAtWord(
+      `${name} er en lokal ${categoryText} i ${locationText}. Se telefon, e-post og nettside, og ta kontakt direkte.`,
+    );
   }
 
-  const categoryText = category?.[0] ?? "håndverker";
-  const locationText = location?.trim() || "Follo";
-  const fallback = `${name} er en lokal ${categoryText} i ${locationText}.`;
-  return fallback.length > 160 ? `${fallback.slice(0, 157)}...` : fallback;
+  // Korte beskrivelser utvides med fagområde og sted, så de treffer bedre
+  // på lokale søk og nærmer seg anbefalt lengde (~120–155 tegn).
+  if (trimmed.length < 110) {
+    const joined = `${trimmed.replace(/[.\s]+$/, "")}. ${context}`;
+    if (joined.length <= 155) return joined;
+  }
+
+  return truncateAtWord(trimmed);
 }
 
 export async function generateMetadata({
@@ -58,6 +79,9 @@ export async function generateMetadata({
       location: locationName ?? undefined,
       description: provider.description,
     }),
+    alternates: {
+      canonical: `/leverandor/${provider.slug ?? slug}`,
+    },
   };
 }
 
@@ -69,9 +93,68 @@ export default async function ProviderPage({ params }: PageProps) {
     return notFound();
   }
 
-  const locationName = provider.location
-    ? await getLocationNameById(provider.location)
+  const [locationName, categories] = await Promise.all([
+    provider.location ? getLocationNameById(provider.location) : null,
+    getCategories(),
+  ]);
+  const primaryCategory = provider.category?.[0]
+    ? categories.find((cat) => cat.name === provider.category?.[0])
+    : undefined;
+  const pageUrl = `${BASE_URL}/leverandor/${provider.slug ?? slug}`;
+  const websiteUrl = provider.url
+    ? /^https?:\/\//i.test(provider.url)
+      ? provider.url
+      : `https://${provider.url}`
     : null;
+  const schema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": schemaTypeForCategory(provider.category?.[0]),
+        "@id": `${pageUrl}#business`,
+        name: provider.name,
+        ...(provider.description ? { description: provider.description } : {}),
+        ...(provider.phone ? { telephone: provider.phone } : {}),
+        ...(provider.email ? { email: provider.email } : {}),
+        url: pageUrl,
+        ...(websiteUrl ? { sameAs: [websiteUrl] } : {}),
+        areaServed: AREA_SERVED,
+        address: {
+          "@type": "PostalAddress",
+          ...(locationName ? { addressLocality: locationName } : {}),
+          addressRegion: "Akershus",
+          addressCountry: "NO",
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Follohjelp",
+            item: `${BASE_URL}/`,
+          },
+          ...(primaryCategory
+            ? [
+                {
+                  "@type": "ListItem",
+                  position: 2,
+                  name: primaryCategory.name,
+                  item: `${BASE_URL}/category/${primaryCategory.slug}`,
+                },
+              ]
+            : []),
+          {
+            "@type": "ListItem",
+            position: primaryCategory ? 3 : 2,
+            name: provider.name,
+            item: pageUrl,
+          },
+        ],
+      },
+    ],
+  };
   const emailSubject = encodeURIComponent(
     "Forespørsel sendt via follohjelp.no",
   );
@@ -81,6 +164,23 @@ export default async function ProviderPage({ params }: PageProps) {
 
   return (
     <main className="container">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      />
+      <nav className="results-count" aria-label="Brødsmulesti">
+        <Link href="/">Follohjelp</Link>
+        {primaryCategory ? (
+          <>
+            {" › "}
+            <Link href={`/category/${primaryCategory.slug}`}>
+              {primaryCategory.name} i Follo
+            </Link>
+          </>
+        ) : null}
+        {" › "}
+        <span aria-current="page">{provider.name}</span>
+      </nav>
       <section className="hero">
         <h1>{provider.name}</h1>
         {provider.category && provider.category.length > 0 ? (
@@ -113,7 +213,7 @@ export default async function ProviderPage({ params }: PageProps) {
                 <span aria-hidden="true">🌐</span>
                 <span>Nettside:</span>
                 <a
-                  href={provider.url}
+                  href={websiteUrl ?? provider.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="provider-contactLink"

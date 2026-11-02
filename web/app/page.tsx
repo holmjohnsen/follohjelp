@@ -2,6 +2,45 @@ import CookieBanner from "@/components/CookieBanner";
 import HomeSearchBar from "@/components/HomeSearchBar";
 import CategoryPills from "@/components/CategoryPills";
 import { getCategories } from "@/lib/airtable";
+import { AREA_SERVED, BASE_URL, CONTACT_EMAIL, SITE_NAME } from "@/lib/site";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
+};
+
+const homeSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${BASE_URL}/#organization`,
+      name: SITE_NAME,
+      url: `${BASE_URL}/`,
+      email: CONTACT_EMAIL,
+      legalName: "E12NNI AS",
+      areaServed: AREA_SERVED,
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${BASE_URL}/#website`,
+      name: SITE_NAME,
+      url: `${BASE_URL}/`,
+      inLanguage: "nb-NO",
+      publisher: { "@id": `${BASE_URL}/#organization` },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${BASE_URL}/sok?q={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ],
+};
 
 // Cache the rendered homepage (incl. the Airtable category fetch) for 5
 // minutes instead of re-hitting Airtable on every single request. Without
@@ -17,6 +56,10 @@ export default async function Home() {
   return (
     <>
       <CookieBanner />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeSchema) }}
+      />
 
       <main className="container">
       <section className="hero">

@@ -8,7 +8,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Kategorier i Follo – finn lokale håndverkere | Follohjelp",
   description:
-    "Velg fagområde og finn lokale håndverkere i Follo. Se rørlegger, elektriker, snekker, murer og flere.",
+    "Velg fagområde og finn lokale håndverkere i Follo – rørleggere, elektrikere, snekkere og flere fagfolk i Drøbak, Ås, Ski, Vestby og Nesodden.",
   alternates: {
     canonical: "/category",
   },
